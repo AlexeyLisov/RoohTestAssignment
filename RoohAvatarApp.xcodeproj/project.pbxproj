@@ -24,6 +24,9 @@
 		8A59ABBA2C4963A6009E6BC6 /* RoohAvatarWatchOSApp_Watch_AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABB92C4963A6009E6BC6 /* RoohAvatarWatchOSApp_Watch_AppUITests.swift */; };
 		8A59ABBC2C4963A6009E6BC6 /* RoohAvatarWatchOSApp_Watch_AppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABBB2C4963A6009E6BC6 /* RoohAvatarWatchOSApp_Watch_AppUITestsLaunchTests.swift */; };
 		8A59ABBF2C4963A6009E6BC6 /* RoohAvatarWatchOSApp Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8A59AB9C2C4963A4009E6BC6 /* RoohAvatarWatchOSApp Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8A59ABD52C4995C2009E6BC6 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABD22C4995C2009E6BC6 /* Coordinator.swift */; };
+		8A59ABD62C4995C2009E6BC6 /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABD32C4995C2009E6BC6 /* MainCoordinator.swift */; };
+		8A59ABD92C4995D7009E6BC6 /* UIViewControllerPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABD72C4995D7009E6BC6 /* UIViewControllerPreview.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +105,9 @@
 		8A59ABB52C4963A6009E6BC6 /* RoohAvatarWatchOSApp Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "RoohAvatarWatchOSApp Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A59ABB92C4963A6009E6BC6 /* RoohAvatarWatchOSApp_Watch_AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoohAvatarWatchOSApp_Watch_AppUITests.swift; sourceTree = "<group>"; };
 		8A59ABBB2C4963A6009E6BC6 /* RoohAvatarWatchOSApp_Watch_AppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoohAvatarWatchOSApp_Watch_AppUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		8A59ABD22C4995C2009E6BC6 /* Coordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		8A59ABD32C4995C2009E6BC6 /* MainCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
+		8A59ABD72C4995D7009E6BC6 /* UIViewControllerPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewControllerPreview.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +159,7 @@
 		8A59AB5C2C4962B2009E6BC6 = {
 			isa = PBXGroup;
 			children = (
+				8A59ABD82C4995D7009E6BC6 /* Helpers */,
 				8A59AB672C4962B2009E6BC6 /* RoohAvatarApp */,
 				8A59AB7E2C4962B3009E6BC6 /* RoohAvatarAppTests */,
 				8A59AB882C4962B3009E6BC6 /* RoohAvatarAppUITests */,
@@ -179,6 +186,7 @@
 		8A59AB672C4962B2009E6BC6 /* RoohAvatarApp */ = {
 			isa = PBXGroup;
 			children = (
+				8A59ABD42C4995C2009E6BC6 /* Navigation */,
 				8A59AB682C4962B2009E6BC6 /* AppDelegate.swift */,
 				8A59AB6A2C4962B2009E6BC6 /* SceneDelegate.swift */,
 				8A59AB6C2C4962B2009E6BC6 /* ViewController.swift */,
@@ -241,6 +249,24 @@
 				8A59ABBB2C4963A6009E6BC6 /* RoohAvatarWatchOSApp_Watch_AppUITestsLaunchTests.swift */,
 			);
 			path = "RoohAvatarWatchOSApp Watch AppUITests";
+			sourceTree = "<group>";
+		};
+		8A59ABD42C4995C2009E6BC6 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				8A59ABD22C4995C2009E6BC6 /* Coordinator.swift */,
+				8A59ABD32C4995C2009E6BC6 /* MainCoordinator.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
+		8A59ABD82C4995D7009E6BC6 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				8A59ABD72C4995D7009E6BC6 /* UIViewControllerPreview.swift */,
+			);
+			name = Helpers;
+			path = RoohAvatarApp/Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -466,8 +492,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A59ABD52C4995C2009E6BC6 /* Coordinator.swift in Sources */,
+				8A59ABD92C4995D7009E6BC6 /* UIViewControllerPreview.swift in Sources */,
 				8A59AB6D2C4962B2009E6BC6 /* ViewController.swift in Sources */,
 				8A59AB692C4962B2009E6BC6 /* AppDelegate.swift in Sources */,
+				8A59ABD62C4995C2009E6BC6 /* MainCoordinator.swift in Sources */,
 				8A59AB6B2C4962B2009E6BC6 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -697,7 +726,6 @@
 				INFOPLIST_FILE = RoohAvatarApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -727,7 +755,6 @@
 				INFOPLIST_FILE = RoohAvatarApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;

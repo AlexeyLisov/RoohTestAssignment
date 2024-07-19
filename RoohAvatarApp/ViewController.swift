@@ -60,6 +60,20 @@ class ViewController: UIViewController {
     
     private func setupUI() {
         
+        let collectionViewController = ImageCollectionViewController()
+        
+        self.addChild(collectionViewController)
+        collectionViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(collectionViewController.view)
+        collectionViewController.didMove(toParent: self)
+        
+        NSLayoutConstraint.activate([
+            collectionViewController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            collectionViewController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            collectionViewController.view.widthAnchor.constraint(equalTo: view.widthAnchor),
+            collectionViewController.view.heightAnchor.constraint(equalToConstant: 150),
+        ])
+        
         self.ageLabel = generateTextLabel(text: "Age")
         self.heightLabel = generateTextLabel(text: "Height")
         self.weightLabel = generateTextLabel(text: "Weight")

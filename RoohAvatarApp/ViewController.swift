@@ -22,13 +22,6 @@ class MainViewModel: ObservableObject {
 import UIKit
 import Combine
 
-extension ViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-}
-
 class ViewController: UIViewController {
     
     weak var coordinator: MainCoordinator?
@@ -71,6 +64,7 @@ class ViewController: UIViewController {
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         textField.inputAccessoryView = generateDoneToolbar(textfield: textField)
+        textField.delegate = self
         return textField
     }
     
@@ -198,6 +192,23 @@ class ViewController: UIViewController {
     }
 }
 
+extension ViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        // Get the current text
+        
+        if let first = string.first, first == "0", range.lowerBound == 0 {
+            return false
+        }
+        
+        return true
+    }
+}
+
 private extension UITextField {
     var textPublisher: AnyPublisher<String, Never> {
         NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: self)
@@ -213,4 +224,5 @@ private extension UITextField {
         return vc
     }
 })
+
 

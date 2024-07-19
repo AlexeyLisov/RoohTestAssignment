@@ -57,7 +57,7 @@ class ImageCollectionViewController: UIViewController {
     }
     
     private func setupCollectionView() {
-        let layout = UICollectionViewFlowLayout()
+        let layout = SnappingCollectionViewLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 20
         layout.itemSize = CGSize(width: 100, height: 100)
@@ -69,6 +69,8 @@ class ImageCollectionViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: ImageCollectionViewCell.identifier)
+        
+        collectionView?.decelerationRate = UIScrollView.DecelerationRate.fast
         
         view.addSubview(collectionView)
         
@@ -89,10 +91,17 @@ class ImageCollectionViewController: UIViewController {
     private func selectItemClosestToCenter() {
         let centerPoint = CGPoint(x: collectionView.bounds.midX, y: collectionView.bounds.midY)
         if let indexPath = collectionView.indexPathForItem(at: centerPoint) {
-            viewModel.selectItem(at: indexPath)
-            collectionView.reloadData()
+            withAnimation {
+                viewModel.selectItem(at: indexPath)
+                collectionView.reloadData()
+            }
+            
         }
     }
+    
+    private let cellWidth: CGFloat = 100
+    private let cellHeight: CGFloat = 100
+    private let minimumInteritemSpacing: CGFloat = 10
 }
 
 extension ImageCollectionViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -114,13 +123,10 @@ extension ImageCollectionViewController: UICollectionViewDelegate, UICollectionV
         scrollToSelectedItem()
     }
     
+    
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        let isSelected = viewModel.isSelectedItem(at: indexPath)
-        let width = collectionView.frame.width - (isSelected ? 0 : 60)  // Account for padding if needed
-        let height = collectionView.frame.height - (isSelected ? 0 : 60)
-        
-        return CGSize(width: min(width, height), height: min(width, height))
+        return CGSize(width: cellWidth, height: cellHeight)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -130,40 +136,20 @@ extension ImageCollectionViewController: UICollectionViewDelegate, UICollectionV
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         selectItemClosestToCenter()
-    }
-    
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         scrollToSelectedItem()
     }
     
-    
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        let layout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
-        let cellWidthIncludingSpacing = layout.itemSize.width
-        
-        let estimatedIndex = targetContentOffset.pointee.x / cellWidthIncludingSpacing
-        var index = round(estimatedIndex)
-        
-        if index < 0 {
-            index = 0
-        } else if index >= CGFloat(viewModel.numberOfItems()) {
-            index = CGFloat(viewModel.numberOfItems() - 1)
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            selectItemClosestToCenter()
+            scrollToSelectedItem()
         }
-        
-        print(index)
-        
-        targetContentOffset.pointee = CGPoint(x: index * cellWidthIncludingSpacing, y: targetContentOffset.pointee.y)
-        
-        viewModel.selectItem(at: IndexPath(item: Int(index), section: 0))
-//        scrollToSelectedItem()
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         selectItemClosestToCenter()
     }
 }
-
-
 
 
 #Preview {

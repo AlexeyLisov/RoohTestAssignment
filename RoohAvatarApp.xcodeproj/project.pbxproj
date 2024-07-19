@@ -30,6 +30,7 @@
 		8A59ABDC2C4A3A7F009E6BC6 /* AvatarUICollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABDB2C4A3A7F009E6BC6 /* AvatarUICollectionView.swift */; };
 		8A59ABDE2C4A3AE8009E6BC6 /* UIViewPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABDD2C4A3AE8009E6BC6 /* UIViewPreview.swift */; };
 		8A59ABE02C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABDF2C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift */; };
+		8AB96F142C4A4DEE00693B3B /* SnappingCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F132C4A4DEE00693B3B /* SnappingCollectionViewLayout.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,6 +115,7 @@
 		8A59ABDB2C4A3A7F009E6BC6 /* AvatarUICollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarUICollectionView.swift; sourceTree = "<group>"; };
 		8A59ABDD2C4A3AE8009E6BC6 /* UIViewPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewPreview.swift; sourceTree = "<group>"; };
 		8A59ABDF2C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarUICollectionViewCell.swift; sourceTree = "<group>"; };
+		8AB96F132C4A4DEE00693B3B /* SnappingCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappingCollectionViewLayout.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,6 +284,7 @@
 			children = (
 				8A59ABDB2C4A3A7F009E6BC6 /* AvatarUICollectionView.swift */,
 				8A59ABDF2C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift */,
+				8AB96F132C4A4DEE00693B3B /* SnappingCollectionViewLayout.swift */,
 			);
 			path = AvatarUICollectionView;
 			sourceTree = "<group>";
@@ -509,6 +512,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8AB96F142C4A4DEE00693B3B /* SnappingCollectionViewLayout.swift in Sources */,
 				8A59ABD52C4995C2009E6BC6 /* Coordinator.swift in Sources */,
 				8A59ABE02C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift in Sources */,
 				8A59ABDE2C4A3AE8009E6BC6 /* UIViewPreview.swift in Sources */,

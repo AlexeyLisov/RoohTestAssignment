@@ -9,15 +9,15 @@ import SwiftUI
 import UIKit
 
 
-struct ImageModel {
+struct AvatarModel {
     let imageName: String
 }
 
-class ImageViewModel {
-    private var images: [ImageModel]
+class AvatarCollectionViewModel {
+    private var images: [AvatarModel]
     private(set) var selectedIndexPath: IndexPath?
     
-    init(images: [ImageModel]) {
+    init(images: [AvatarModel]) {
         self.images = images
         self.selectedIndexPath = IndexPath(item: 0, section: 0)
     }
@@ -40,8 +40,8 @@ class ImageViewModel {
     }
 }
 
-class ImageCollectionViewController: UIViewController {
-    private var viewModel: ImageViewModel!
+class AvatarCollectionViewController: UIViewController {
+    private var viewModel: AvatarCollectionViewModel!
     private var collectionView: UICollectionView!
     
     override func viewDidLoad() {
@@ -52,8 +52,8 @@ class ImageCollectionViewController: UIViewController {
     
     private func setupViewModel() {
         
-        let images = ["circle", "square", "square.and.arrow.up", "pencil", "eraser"].map { ImageModel(imageName: $0) }
-        viewModel = ImageViewModel(images: images)
+        let images = ["circle", "square", "square.and.arrow.up", "pencil", "eraser"].map { AvatarModel(imageName: $0) }
+        viewModel = AvatarCollectionViewModel(images: images)
     }
     
     private func setupCollectionView() {
@@ -68,7 +68,7 @@ class ImageCollectionViewController: UIViewController {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: ImageCollectionViewCell.identifier)
+        collectionView.register(AvatarCollectionViewCell.self, forCellWithReuseIdentifier: AvatarCollectionViewCell.identifier)
         
         collectionView?.decelerationRate = UIScrollView.DecelerationRate.fast
         
@@ -104,13 +104,13 @@ class ImageCollectionViewController: UIViewController {
     private let minimumInteritemSpacing: CGFloat = 10
 }
 
-extension ImageCollectionViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension AvatarCollectionViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.numberOfItems()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCollectionViewCell.identifier, for: indexPath) as! ImageCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AvatarCollectionViewCell.identifier, for: indexPath) as! AvatarCollectionViewCell
         let image = viewModel.image(for: indexPath)
         let isSelected = viewModel.isSelectedItem(at: indexPath)
         cell.configure(with: image, isSelected: isSelected)
@@ -154,7 +154,7 @@ extension ImageCollectionViewController: UICollectionViewDelegate, UICollectionV
 
 #Preview {
     UIViewControllerPreview {
-        let vc = ImageCollectionViewController()
+        let vc = AvatarCollectionViewController()
         return vc
     }
 }

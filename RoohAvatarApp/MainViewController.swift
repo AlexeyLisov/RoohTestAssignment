@@ -22,7 +22,7 @@ class MainViewModel: ObservableObject {
 import UIKit
 import Combine
 
-class ViewController: UIViewController {
+class MainViewController: UIViewController {
     
     weak var coordinator: MainCoordinator?
     
@@ -91,7 +91,7 @@ class ViewController: UIViewController {
     
     private func setupUI() {
         
-        let collectionViewController = ImageCollectionViewController()
+        let collectionViewController = AvatarCollectionViewController()
         
         self.addChild(collectionViewController)
         collectionViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -192,7 +192,7 @@ class ViewController: UIViewController {
     }
 }
 
-extension ViewController: UITextFieldDelegate {
+extension MainViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
@@ -220,7 +220,7 @@ private extension UITextField {
 
 #Preview(body: {
     UIViewControllerPreview {
-        let vc = ViewController()
+        let vc = MainViewController()
         return vc
     }
 })

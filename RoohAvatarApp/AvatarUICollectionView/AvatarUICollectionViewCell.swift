@@ -8,7 +8,7 @@
 import SwiftUI
 import UIKit
 
-class ImageCollectionViewCell: UICollectionViewCell {
+class AvatarCollectionViewCell: UICollectionViewCell {
     static let identifier = "ImageCollectionViewCell"
     
     private let imageView: UIImageView = {
@@ -44,7 +44,7 @@ class ImageCollectionViewCell: UICollectionViewCell {
 #Preview(body: {
     UIViewPreview {
         
-        let imageViewCell = ImageCollectionViewCell()
+        let imageViewCell = AvatarCollectionViewCell()
         
         imageViewCell.configure(with: UIImage(systemName: "circle")!,
                                 isSelected: false)

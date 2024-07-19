@@ -27,6 +27,9 @@
 		8A59ABD52C4995C2009E6BC6 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABD22C4995C2009E6BC6 /* Coordinator.swift */; };
 		8A59ABD62C4995C2009E6BC6 /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABD32C4995C2009E6BC6 /* MainCoordinator.swift */; };
 		8A59ABD92C4995D7009E6BC6 /* UIViewControllerPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABD72C4995D7009E6BC6 /* UIViewControllerPreview.swift */; };
+		8A59ABDC2C4A3A7F009E6BC6 /* AvatarUICollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABDB2C4A3A7F009E6BC6 /* AvatarUICollectionView.swift */; };
+		8A59ABDE2C4A3AE8009E6BC6 /* UIViewPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABDD2C4A3AE8009E6BC6 /* UIViewPreview.swift */; };
+		8A59ABE02C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABDF2C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +111,9 @@
 		8A59ABD22C4995C2009E6BC6 /* Coordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		8A59ABD32C4995C2009E6BC6 /* MainCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
 		8A59ABD72C4995D7009E6BC6 /* UIViewControllerPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewControllerPreview.swift; sourceTree = "<group>"; };
+		8A59ABDB2C4A3A7F009E6BC6 /* AvatarUICollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarUICollectionView.swift; sourceTree = "<group>"; };
+		8A59ABDD2C4A3AE8009E6BC6 /* UIViewPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewPreview.swift; sourceTree = "<group>"; };
+		8A59ABDF2C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarUICollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +192,7 @@
 		8A59AB672C4962B2009E6BC6 /* RoohAvatarApp */ = {
 			isa = PBXGroup;
 			children = (
+				8A59ABDA2C4A3A63009E6BC6 /* AvatarUICollectionView */,
 				8A59ABD42C4995C2009E6BC6 /* Navigation */,
 				8A59AB682C4962B2009E6BC6 /* AppDelegate.swift */,
 				8A59AB6A2C4962B2009E6BC6 /* SceneDelegate.swift */,
@@ -264,9 +271,19 @@
 			isa = PBXGroup;
 			children = (
 				8A59ABD72C4995D7009E6BC6 /* UIViewControllerPreview.swift */,
+				8A59ABDD2C4A3AE8009E6BC6 /* UIViewPreview.swift */,
 			);
 			name = Helpers;
 			path = RoohAvatarApp/Helpers;
+			sourceTree = "<group>";
+		};
+		8A59ABDA2C4A3A63009E6BC6 /* AvatarUICollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				8A59ABDB2C4A3A7F009E6BC6 /* AvatarUICollectionView.swift */,
+				8A59ABDF2C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift */,
+			);
+			path = AvatarUICollectionView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -493,6 +510,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A59ABD52C4995C2009E6BC6 /* Coordinator.swift in Sources */,
+				8A59ABE02C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift in Sources */,
+				8A59ABDE2C4A3AE8009E6BC6 /* UIViewPreview.swift in Sources */,
+				8A59ABDC2C4A3A7F009E6BC6 /* AvatarUICollectionView.swift in Sources */,
 				8A59ABD92C4995D7009E6BC6 /* UIViewControllerPreview.swift in Sources */,
 				8A59AB6D2C4962B2009E6BC6 /* ViewController.swift in Sources */,
 				8A59AB692C4962B2009E6BC6 /* AppDelegate.swift in Sources */,

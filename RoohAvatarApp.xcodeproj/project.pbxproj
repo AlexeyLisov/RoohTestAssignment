@@ -30,6 +30,10 @@
 		8A59ABDE2C4A3AE8009E6BC6 /* UIViewPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABDD2C4A3AE8009E6BC6 /* UIViewPreview.swift */; };
 		8A59ABE02C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABDF2C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift */; };
 		8AB96F142C4A4DEE00693B3B /* SnappingCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F132C4A4DEE00693B3B /* SnappingCollectionViewLayout.swift */; };
+		8AB96F192C4AB71400693B3B /* HorizontalPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F182C4AB71400693B3B /* HorizontalPickerView.swift */; };
+		8AB96F1B2C4AB72E00693B3B /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F1A2C4AB72E00693B3B /* MainView.swift */; };
+		8AB96F1E2C4AB75200693B3B /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F1D2C4AB75200693B3B /* MainViewModel.swift */; };
+		8AB96F212C4AB79D00693B3B /* AvatarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F202C4AB79D00693B3B /* AvatarModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,6 +118,10 @@
 		8A59ABDD2C4A3AE8009E6BC6 /* UIViewPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewPreview.swift; sourceTree = "<group>"; };
 		8A59ABDF2C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarUICollectionViewCell.swift; sourceTree = "<group>"; };
 		8AB96F132C4A4DEE00693B3B /* SnappingCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappingCollectionViewLayout.swift; sourceTree = "<group>"; };
+		8AB96F182C4AB71400693B3B /* HorizontalPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalPickerView.swift; sourceTree = "<group>"; };
+		8AB96F1A2C4AB72E00693B3B /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		8AB96F1D2C4AB75200693B3B /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+		8AB96F202C4AB79D00693B3B /* AvatarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -224,6 +232,9 @@
 		8A59AB9D2C4963A4009E6BC6 /* RoohAvatarWatchOSApp Watch App */ = {
 			isa = PBXGroup;
 			children = (
+				8AB96F1F2C4AB78B00693B3B /* Models */,
+				8AB96F1C2C4AB74300693B3B /* ViewModels */,
+				8AB96F172C4AB70400693B3B /* Views */,
 				8A59AB9E2C4963A4009E6BC6 /* RoohAvatarWatchOSAppApp.swift */,
 				8A59ABA02C4963A4009E6BC6 /* ContentView.swift */,
 				8A59ABA22C4963A6009E6BC6 /* Assets.xcassets */,
@@ -284,6 +295,31 @@
 				8AB96F132C4A4DEE00693B3B /* SnappingCollectionViewLayout.swift */,
 			);
 			path = AvatarUICollectionView;
+			sourceTree = "<group>";
+		};
+		8AB96F172C4AB70400693B3B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8AB96F182C4AB71400693B3B /* HorizontalPickerView.swift */,
+				8AB96F1A2C4AB72E00693B3B /* MainView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		8AB96F1C2C4AB74300693B3B /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				8AB96F1D2C4AB75200693B3B /* MainViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		8AB96F1F2C4AB78B00693B3B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8AB96F202C4AB79D00693B3B /* AvatarModel.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -542,6 +578,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8AB96F1E2C4AB75200693B3B /* MainViewModel.swift in Sources */,
+				8AB96F192C4AB71400693B3B /* HorizontalPickerView.swift in Sources */,
+				8AB96F212C4AB79D00693B3B /* AvatarModel.swift in Sources */,
+				8AB96F1B2C4AB72E00693B3B /* MainView.swift in Sources */,
 				8A59ABA12C4963A4009E6BC6 /* ContentView.swift in Sources */,
 				8A59AB9F2C4963A4009E6BC6 /* RoohAvatarWatchOSAppApp.swift in Sources */,
 			);

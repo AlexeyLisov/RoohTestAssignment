@@ -22,18 +22,55 @@ class MainViewModel: ObservableObject {
 import UIKit
 import Combine
 
+extension ViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+}
+
 class ViewController: UIViewController {
     
     weak var coordinator: MainCoordinator?
     
     private var viewModel = MainViewModel()
     private var cancellables = Set<AnyCancellable>()
+    
+    
+    func generateDoneToolbar(textfield: UITextField) -> UIToolbar {
+        let doneToolbar: UIToolbar = UIToolbar()
+        doneToolbar.sizeToFit()
+        
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(self.doneButtonAction))
+        
+        let items = [flexSpace, done]
+        doneToolbar.items = items
+        doneToolbar.barStyle = .default
+        
+        return doneToolbar
+    }
+    
+    @objc func doneButtonAction() {
+        
+        if ageTextField.isFirstResponder {
+            heightTextField.becomeFirstResponder()
+        } else if heightTextField.isFirstResponder {
+            weightTextField.becomeFirstResponder()
+        } else if weightTextField.isFirstResponder {
+            weightTextField.resignFirstResponder()
+        }
+    }
+    
 
     private func generateTextField(placeHolder: String) -> UITextField {
         let textField = UITextField()
         textField.placeholder = placeHolder
         textField.keyboardType = .numberPad
+        textField.returnKeyType = .done
         textField.translatesAutoresizingMaskIntoConstraints = false
+        
+        textField.inputAccessoryView = generateDoneToolbar(textfield: textField)
         return textField
     }
     

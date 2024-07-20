@@ -20,12 +20,19 @@ enum WatchConnectionError: Error {
     case sessionNotSupported
 }
 
+enum SendingMessageStatus {
+    case notRequested
+    case creatingSession
+    case sendingMessage
+    case success
+}
+
 class MainViewModel: ObservableObject {
     @Published var age: Int = 0
     @Published var height: Int = 0
     @Published var weight: Int = 0
     
-    @Published var sendingMessageStatusVisible: Bool = false
+    @Published var sendingMessageStatus: SendingMessageStatus = .notRequested
     
     var avatarCollectionViewModel: AvatarCollectionViewModel
     
@@ -39,25 +46,36 @@ class MainViewModel: ObservableObject {
     
     func sendAvatarToAppleWatch() {
         
-        sendingMessageStatusVisible = true
-//        guard self.watchService.setupWCSession() else {
-//            alertPublisher.send(.sessionNotSupported)
-//            return
-//        }
-//        
-//        let avatarModel = CharacterModel(avatarModel: avatarCollectionViewModel.avatarModel,
-//                                         age: age, height: height, weight: weight)
-//        
-//        guard let encodedModel = try? JSONEncoder().encode(avatarModel) else {
-//            print("Encoding failed")
-//            return
-//        }
-//        
-//        let message = ["characterModel": encodedModel]
-//        
-//        Task {
-//            try await watchService.sendMessageToWatch(data: message)
-//        }
+        sendingMessageStatus = .creatingSession
+        guard self.watchService.setupWCSession() else {
+            alertPublisher.send(.sessionNotSupported)
+            sendingMessageStatus = .notRequested
+            return
+        }
+        
+        let avatarModel = CharacterModel(avatarModel: avatarCollectionViewModel.avatarModel,
+                                         age: age, height: height, weight: weight)
+        
+        guard let encodedModel = try? JSONEncoder().encode(avatarModel) else {
+            print("Encoding failed")
+            return
+        }
+        
+        let message = ["characterModel": encodedModel]
+        
+        Task {
+            await self.watchService.activateSession()
+            
+            await MainActor.run {
+                sendingMessageStatus = .sendingMessage
+            }
+            
+//            await self.watchService.sendMessageToWatch(data: message)
+            
+            await MainActor.run {
+                sendingMessageStatus = .success
+            }
+        }
         
     }
 }
@@ -129,8 +147,12 @@ class MainViewController: UIViewController {
     private var heightLabel: UILabel!
     private var weightLabel: UILabel!
     
+    private var activityIndicator: UIActivityIndicatorView!
+    private var successView: UIImageView!
     private var sendingMessageStatus: UITextView!
     private var sendingMessageStatusStackView: UIStackView!
+    
+    private var sendCharacterButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -203,10 +225,16 @@ class MainViewController: UIViewController {
         sendingMessageStatus.font = UIFont.preferredFont(forTextStyle: .body)
         sendingMessageStatus.backgroundColor = .clear
         
-        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator = UIActivityIndicatorView()
         activityIndicator.startAnimating()
         
-        sendingMessageStatusStackView = UIStackView(arrangedSubviews: [activityIndicator, sendingMessageStatus])//[activityIndicator, sendingMessageStatus])
+        successView = UIImageView(image: UIImage(systemName: "checkmark.circle.fill")!)
+        successView.contentMode = .scaleAspectFit
+        successView.tintColor = .systemGreen
+        
+        successView.isHidden = true
+        
+        sendingMessageStatusStackView = UIStackView(arrangedSubviews: [successView, activityIndicator, sendingMessageStatus])
         sendingMessageStatusStackView.translatesAutoresizingMaskIntoConstraints = false
         sendingMessageStatusStackView.axis = .vertical
         sendingMessageStatusStackView.spacing = 5
@@ -227,31 +255,33 @@ class MainViewController: UIViewController {
             sendingMessageStatusStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             sendingMessageStatusStackView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40),
+            sendingMessageStatusStackView.heightAnchor.constraint(equalToConstant: 100),
             
-            sendingMessageStatus.heightAnchor.constraint(equalToConstant: 30)
+            successView.heightAnchor.constraint(equalToConstant: 30),
+            successView.widthAnchor.constraint(equalToConstant: 30)
         ])
         
-        let filledButton = UIButton(type: .system)
+        sendCharacterButton = UIButton(type: .system)
         
         // Set button title and appearance
-        filledButton.setTitle("Filled Button", for: .normal)
-        filledButton.setTitleColor(.white, for: .normal)
-        filledButton.backgroundColor = UIColor.systemBlue
-        filledButton.layer.cornerRadius = 10
-        filledButton.layer.masksToBounds = true
-        filledButton.translatesAutoresizingMaskIntoConstraints = false
+        sendCharacterButton.setTitle("Filled Button", for: .normal)
+        sendCharacterButton.setTitleColor(.white, for: .normal)
+        sendCharacterButton.backgroundColor = UIColor.systemBlue
+        sendCharacterButton.layer.cornerRadius = 10
+        sendCharacterButton.layer.masksToBounds = true
+        sendCharacterButton.translatesAutoresizingMaskIntoConstraints = false
         
-        filledButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        sendCharacterButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         
-        self.view.addSubview(filledButton)
+        self.view.addSubview(sendCharacterButton)
         
         NSLayoutConstraint.activate([
-            sendingMessageStatusStackView.bottomAnchor.constraint(equalTo: filledButton.topAnchor, constant: -20),
-            filledButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            filledButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            filledButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            filledButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10),
-            filledButton.heightAnchor.constraint(equalToConstant: 40),
+            sendingMessageStatusStackView.bottomAnchor.constraint(equalTo: sendCharacterButton.topAnchor, constant: -20),
+            sendCharacterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            sendCharacterButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            sendCharacterButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            sendCharacterButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10),
+            sendCharacterButton.heightAnchor.constraint(equalToConstant: 40),
         ])
         
     }
@@ -259,6 +289,8 @@ class MainViewController: UIViewController {
     @objc func buttonTapped() {
         viewModel.sendAvatarToAppleWatch()
     }
+    
+//    private func
     
     private func setupBindings() {
         ageTextField.textPublisher
@@ -280,14 +312,37 @@ class MainViewController: UIViewController {
             .store(in: &cancellables)
         
         // TODO: check ref cycle
-        viewModel.$sendingMessageStatusVisible.sink { showSendingStatusView in
+        
+        viewModel.$sendingMessageStatus
+            .debounce(for: 0.3, scheduler: RunLoop.main).sink { status in
             UIView.transition(with: self.sendingMessageStatusStackView, duration: 0.4,
                               options: .transitionCrossDissolve,
                               animations: {
-                self.sendingMessageStatusStackView.isHidden = !showSendingStatusView
+                switch status {
+                case .notRequested:
+                    self.sendingMessageStatusStackView.isHidden = true
+                case .creatingSession:
+                    self.sendCharacterButton.isEnabled = false
+                    self.sendingMessageStatusStackView.isHidden = false
+                    self.sendingMessageStatus.text = "Creating session"
+                case .sendingMessage:
+                    self.sendingMessageStatusStackView.isHidden = false
+                    self.sendingMessageStatus.text = "Sending message"
+                case .success:
+                    self.sendingMessageStatusStackView.isHidden = false
+                    self.sendingMessageStatus.text = "Character sent successfully"
+                    self.sendCharacterButton.isEnabled = true
+                    self.activityIndicator.stopAnimating()
+                    self.successView.isHidden = false
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        self.sendingMessageStatusStackView.isHidden = true
+                    }
+                }
             })
         }
         .store(in: &cancellables)
+        
 
     }
 }

@@ -1,10 +1,11 @@
 //
 //  WatchConnectivityService.swift
-//  RoohAvatarWatchOSApp Watch App
+//  RoohAvatarApp
 //
 //  Created by Alexey Lisov on 20/07/2024.
 //
 
+import Foundation
 import WatchConnectivity
 import Combine
 
@@ -30,6 +31,7 @@ class WatchConnectivityService: NSObject {
 }
 
 extension WatchConnectivityService: WatchConnectivityServiceProtocol {
+    
     var messagePublisher: AnyPublisher<[String : Any], Never> {
         messagePublisherSubject.eraseToAnyPublisher()
     }
@@ -51,6 +53,7 @@ extension WatchConnectivityService: WatchConnectivityServiceProtocol {
         
     }
     
+    
     func activateSession() async {
         
         guard let session = session,
@@ -66,19 +69,29 @@ extension WatchConnectivityService: WatchConnectivityServiceProtocol {
     }
     
     func sendMessageToWatch(data: [String: Any]) async throws {
-        await withCheckedContinuation { continuation in
+        
+        try await withCheckedThrowingContinuation { continuation in
             session?.sendMessage(data, replyHandler: { reply in
                 continuation.resume(returning: reply)
             }, errorHandler: { error in
-                continuation.resume(throwing: error as! Never)
-                //                print("Error sending message: \(error)")
+                continuation.resume(throwing: error)
             })
         }
     }
 }
 
-
 extension WatchConnectivityService: WCSessionDelegate {
+    
+    #if os(iOS)
+    func sessionDidBecomeInactive(_ session: WCSession) {
+        print(#function)
+    }
+    
+    func sessionDidDeactivate(_ session: WCSession) {
+        print(#function)
+    }
+    #endif
+    
     
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
         print("Session activated")
@@ -86,20 +99,11 @@ extension WatchConnectivityService: WCSessionDelegate {
         self.continuation?.resume(returning: ())
     }
     
+    
     func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
         // Handle received message with reply
         messagePublisherSubject.send(message)
         
         replyHandler(["status": "delivered"])
-    }
-    
-//    func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
-//        // Handle received message from watchOS
-//        messagePublisherSubject.send(message)
-//    }
-    
-    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
-//        NSLog("didReceiveApplicationContext : %@", applicationContext)
-        messagePublisherSubject.send(applicationContext)
     }
 }

@@ -25,6 +25,8 @@ class MainViewModel: ObservableObject {
     @Published var height: Int = 0
     @Published var weight: Int = 0
     
+    @Published var sendingMessageStatusVisible: Bool = false
+    
     var avatarCollectionViewModel: AvatarCollectionViewModel
     
     var alertPublisher = PassthroughSubject<WatchConnectionError, Never>()
@@ -37,24 +39,25 @@ class MainViewModel: ObservableObject {
     
     func sendAvatarToAppleWatch() {
         
-        guard self.watchService.setupWCSession() else {
-            alertPublisher.send(.sessionNotSupported)
-            return
-        }
-        
-        let avatarModel = CharacterModel(avatarModel: avatarCollectionViewModel.avatarModel,
-                                         age: age, height: height, weight: weight)
-        
-        guard let encodedModel = try? JSONEncoder().encode(avatarModel) else {
-            print("Encoding failed")
-            return
-        }
-        
-        let message = ["characterModel": encodedModel]
-        
-        Task {
-            try await watchService.sendMessageToWatch(data: message)
-        }
+        sendingMessageStatusVisible = true
+//        guard self.watchService.setupWCSession() else {
+//            alertPublisher.send(.sessionNotSupported)
+//            return
+//        }
+//        
+//        let avatarModel = CharacterModel(avatarModel: avatarCollectionViewModel.avatarModel,
+//                                         age: age, height: height, weight: weight)
+//        
+//        guard let encodedModel = try? JSONEncoder().encode(avatarModel) else {
+//            print("Encoding failed")
+//            return
+//        }
+//        
+//        let message = ["characterModel": encodedModel]
+//        
+//        Task {
+//            try await watchService.sendMessageToWatch(data: message)
+//        }
         
     }
 }
@@ -126,6 +129,9 @@ class MainViewController: UIViewController {
     private var heightLabel: UILabel!
     private var weightLabel: UILabel!
     
+    private var sendingMessageStatus: UITextView!
+    private var sendingMessageStatusStackView: UIStackView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -191,6 +197,40 @@ class MainViewController: UIViewController {
             weightTextField.widthAnchor.constraint(equalToConstant: 100)
         ])
         
+        sendingMessageStatus = UITextView()
+        sendingMessageStatus.text = "Establishing connection with Apple Watch"
+        sendingMessageStatus.textAlignment = .center
+        sendingMessageStatus.font = UIFont.preferredFont(forTextStyle: .body)
+        sendingMessageStatus.backgroundColor = .clear
+        
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.startAnimating()
+        
+        sendingMessageStatusStackView = UIStackView(arrangedSubviews: [activityIndicator, sendingMessageStatus])//[activityIndicator, sendingMessageStatus])
+        sendingMessageStatusStackView.translatesAutoresizingMaskIntoConstraints = false
+        sendingMessageStatusStackView.axis = .vertical
+        sendingMessageStatusStackView.spacing = 5
+        sendingMessageStatusStackView.layoutMargins = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
+        sendingMessageStatusStackView.isLayoutMarginsRelativeArrangement = true
+        
+        sendingMessageStatusStackView.isHidden = true
+        
+        sendingMessageStatusStackView.layer.cornerRadius = 10
+        sendingMessageStatusStackView.layer.borderColor = UIColor.gray.cgColor
+        sendingMessageStatusStackView.layer.borderWidth = 1
+        sendingMessageStatusStackView.layer.masksToBounds = true
+        
+        sendingMessageStatusStackView.isHidden = true
+        view.addSubview(sendingMessageStatusStackView)
+        
+        NSLayoutConstraint.activate([
+            sendingMessageStatusStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            sendingMessageStatusStackView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40),
+            
+            sendingMessageStatus.heightAnchor.constraint(equalToConstant: 30)
+        ])
+        
         let filledButton = UIButton(type: .system)
         
         // Set button title and appearance
@@ -206,6 +246,7 @@ class MainViewController: UIViewController {
         self.view.addSubview(filledButton)
         
         NSLayoutConstraint.activate([
+            sendingMessageStatusStackView.bottomAnchor.constraint(equalTo: filledButton.topAnchor, constant: -20),
             filledButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             filledButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             filledButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
@@ -238,8 +279,15 @@ class MainViewController: UIViewController {
             .assign(to: \.weight, on: viewModel)
             .store(in: &cancellables)
         
-        
-//        collectionViewController.vi
+        // TODO: check ref cycle
+        viewModel.$sendingMessageStatusVisible.sink { showSendingStatusView in
+            UIView.transition(with: self.sendingMessageStatusStackView, duration: 0.4,
+                              options: .transitionCrossDissolve,
+                              animations: {
+                self.sendingMessageStatusStackView.isHidden = !showSendingStatusView
+            })
+        }
+        .store(in: &cancellables)
 
     }
 }
@@ -251,7 +299,6 @@ extension MainViewController: UITextFieldDelegate {
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        // Get the current text
         
         if let first = string.first, first == "0", range.lowerBound == 0 {
             return false

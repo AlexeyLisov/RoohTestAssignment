@@ -9,51 +9,24 @@ import SwiftUI
 import UIKit
 
 
-struct AvatarModel {
+struct AvatarModel: Codable {
     let imageName: String
 }
 
-class AvatarCollectionViewModel {
-    private var images: [AvatarModel]
-    private(set) var selectedIndexPath: IndexPath?
-    
-    init(images: [AvatarModel]) {
-        self.images = images
-        self.selectedIndexPath = IndexPath(item: 0, section: 0)
-    }
-    
-    func numberOfItems() -> Int {
-        return images.count
-    }
-    
-    func image(for indexPath: IndexPath) -> UIImage? {
-        let imageName = images[indexPath.item].imageName
-        return UIImage(systemName: imageName)
-    }
-    
-    func selectItem(at indexPath: IndexPath) {
-        selectedIndexPath = indexPath
-    }
-    
-    func isSelectedItem(at indexPath: IndexPath) -> Bool {
-        return selectedIndexPath == indexPath
-    }
-}
 
 class AvatarCollectionViewController: UIViewController {
+    
     private var viewModel: AvatarCollectionViewModel!
     private var collectionView: UICollectionView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupViewModel()
+//        setupViewModel()
         setupCollectionView()
     }
     
-    private func setupViewModel() {
-        
-        let images = ["circle", "square", "square.and.arrow.up", "pencil", "eraser"].map { AvatarModel(imageName: $0) }
-        viewModel = AvatarCollectionViewModel(images: images)
+    func setupViewModel(viewModel: AvatarCollectionViewModel) {
+        self.viewModel = viewModel
     }
     
     private func setupCollectionView() {
@@ -84,8 +57,7 @@ class AvatarCollectionViewController: UIViewController {
     }
     
     private func scrollToSelectedItem() {
-        guard let selectedIndexPath = viewModel.selectedIndexPath else { return }
-        collectionView.scrollToItem(at: selectedIndexPath, at: .centeredHorizontally, animated: true)
+        collectionView.scrollToItem(at: viewModel.selectedIndexPath, at: .centeredHorizontally, animated: true)
     }
     
     private func selectItemClosestToCenter() {
@@ -152,9 +124,17 @@ extension AvatarCollectionViewController: UICollectionViewDelegate, UICollection
 }
 
 
+extension AvatarCollectionViewModel {
+    static var mock: AvatarCollectionViewModel = {
+        let images = ["circle", "square", "square.and.arrow.up", "pencil", "eraser"].map { AvatarModel(imageName: $0) }
+        return AvatarCollectionViewModel(images: images)
+    }()
+}
+
 #Preview {
     UIViewControllerPreview {
         let vc = AvatarCollectionViewController()
+        vc.setupViewModel(viewModel: AvatarCollectionViewModel.mock)
         return vc
     }
 }

@@ -7,13 +7,54 @@
 
 import UIKit
 import SwiftUI
+import Combine
+
+struct CharacterModel: Codable {
+    var avatarModel: AvatarModel
+    var age: Int
+    var height: Int
+    var weight: Int
+}
+
+enum WatchConnectionError: Error {
+    case sessionNotSupported
+}
 
 class MainViewModel: ObservableObject {
-    @Published var age: String = ""
-    @Published var height: String = ""
-    @Published var weight: String = ""
+    @Published var age: Int = 0
+    @Published var height: Int = 0
+    @Published var weight: Int = 0
+    
+    var avatarCollectionViewModel: AvatarCollectionViewModel
+    
+    var alertPublisher = PassthroughSubject<WatchConnectionError, Never>()
+    let watchService: WatchConnectivityServiceProtocol
+    
+    init(watchService: WatchConnectivityService = WatchConnectivityService()) {
+        self.watchService = watchService
+        self.avatarCollectionViewModel = AvatarCollectionViewModel.mock
+    }
     
     func sendAvatarToAppleWatch() {
+        
+        guard self.watchService.setupWCSession() else {
+            alertPublisher.send(.sessionNotSupported)
+            return
+        }
+        
+        let avatarModel = CharacterModel(avatarModel: avatarCollectionViewModel.avatarModel,
+                                         age: age, height: height, weight: weight)
+        
+        guard let encodedModel = try? JSONEncoder().encode(avatarModel) else {
+            print("Encoding failed")
+            return
+        }
+        
+        let message = ["characterModel": encodedModel]
+        
+        Task {
+            try await watchService.sendMessageToWatch(data: message)
+        }
         
     }
 }
@@ -75,6 +116,8 @@ class MainViewController: UIViewController {
         return label
     }
     
+    private var collectionViewController = AvatarCollectionViewController()
+    
     private var ageTextField: UITextField!
     private var heightTextField: UITextField!
     private var weightTextField: UITextField!
@@ -87,11 +130,14 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupBindings()
+        setupViewModels()
+    }
+    
+    private func setupViewModels() {
+        self.collectionViewController.setupViewModel(viewModel: viewModel.avatarCollectionViewModel)
     }
     
     private func setupUI() {
-        
-        let collectionViewController = AvatarCollectionViewController()
         
         self.addChild(collectionViewController)
         collectionViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -176,18 +222,24 @@ class MainViewController: UIViewController {
     private func setupBindings() {
         ageTextField.textPublisher
             .receive(on: RunLoop.main)
+            .map({ Int($0) ?? 0 })
             .assign(to: \.age, on: viewModel)
             .store(in: &cancellables)
         
         heightTextField.textPublisher
             .receive(on: RunLoop.main)
+            .map({ Int($0) ?? 0 })
             .assign(to: \.height, on: viewModel)
             .store(in: &cancellables)
         
         weightTextField.textPublisher
             .receive(on: RunLoop.main)
+            .map({ Int($0) ?? 0 })
             .assign(to: \.weight, on: viewModel)
             .store(in: &cancellables)
+        
+        
+//        collectionViewController.vi
 
     }
 }

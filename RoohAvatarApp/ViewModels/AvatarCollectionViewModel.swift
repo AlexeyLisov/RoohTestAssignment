@@ -1,0 +1,44 @@
+//
+//  AvatarCollectionViewModel.swift
+//  RoohAvatarApp
+//
+//  Created by Alexey Lisov on 19/07/2024.
+//
+
+import UIKit
+import Combine
+
+class AvatarCollectionViewModel {
+    
+//    var selectedAvatarModel = PassthroughSubject<AvatarModel, Never>()
+    
+    private var images: [AvatarModel]
+    private(set) var selectedIndexPath: IndexPath
+    
+    var avatarModel: AvatarModel {
+        images[selectedIndexPath.item]
+    }
+    
+    init(images: [AvatarModel]) {
+        self.images = images
+        self.selectedIndexPath = IndexPath(item: 0, section: 0)
+//        self.selectedAvatarModel.send(avatarModel(for: self.selectedIndexPath))
+    }
+    
+    func numberOfItems() -> Int {
+        return images.count
+    }
+    
+    func image(for indexPath: IndexPath) -> UIImage? {
+        let imageName = images[indexPath.item].imageName
+        return UIImage(systemName: imageName)
+    }
+    
+    func selectItem(at indexPath: IndexPath) {
+        selectedIndexPath = indexPath
+    }
+    
+    func isSelectedItem(at indexPath: IndexPath) -> Bool {
+        return selectedIndexPath == indexPath
+    }
+}

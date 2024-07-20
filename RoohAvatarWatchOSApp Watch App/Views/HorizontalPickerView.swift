@@ -33,6 +33,21 @@ struct HorizontalPickerView: View {
                     }
                     .padding(2)
                 }
+                .scrollDisabled(true)
+                .gesture(DragGesture(minimumDistance: 20, coordinateSpace: .global)
+                    .onEnded { value in
+                        let horizontalAmount = value.translation.width
+                        let verticalAmount = value.translation.height
+                        
+                        if abs(horizontalAmount) > abs(verticalAmount) {
+                            
+                            if horizontalAmount > 0 {
+                                viewModel.selectPrevImage()
+                            } else {
+                                viewModel.selectNextImage()
+                            }
+                        }
+                    })
                 .contentMargins(.horizontal, 50, for: .scrollContent)
                 .onAppear {
                     proxy.scrollTo(viewModel.selectedImage, anchor: .center)

@@ -10,32 +10,44 @@ import SwiftUI
 
 struct MainView: View {
     
+    @FocusState private var isPickerFocused: Bool
+    
     @ObservedObject var viewModel = MainViewModel()
     
     var body: some View {
         
         TabView {
+            parametersView
+                .padding(5)
             imagesScrollView
-            agePicker
-            heightPicker
-            weightPicker
-            sendButtonView
+            
+            
         }
+        .padding(-10)
         .tabViewStyle(.verticalPage)
         
     }
     
     var parametersView: some View {
         VStack {
-            agePicker
-            heightPicker
-            weightPicker
+            HStack {
+                agePicker
+                heightPicker
+                weightPicker
+            }
+            
+            .labelsHidden()
+            
+            sendButtonView
         }
-        .labelsHidden()
+        
     }
     
     var sendButtonView: some View {
         Button("Send to iPhone") {
+            
+            isPickerFocused = false
+            
             viewModel.sendAvatarToiPhone()
         }
     }
@@ -43,43 +55,49 @@ struct MainView: View {
     var agePicker: some View {
         VStack {
             Text("Age")
+                .font(.caption2)
                 .bold()
+            Spacer()
             Picker("Age", selection: $viewModel.age) {
                 ForEach(0..<125) {
                     Text("\($0)")
                 }
             }
             .pickerStyle(.wheel)
-            .frame(height: 50)
+            .focused($isPickerFocused)
+//            .frame(width: 100)
         }
     }
     
     var heightPicker: some View {
         VStack {
             Text("Height")
+                .font(.caption2)
                 .bold()
+            Spacer()
             Picker("Height", selection: $viewModel.height) {
                 ForEach(50..<250) {
-                    Text("\($0) cm")
+                    Text("\($0)")
                 }
             }
             .pickerStyle(.wheel)
-            .frame(height: 50)
+//            .frame(width: 100)
         }
     }
     
     var weightPicker: some View {
         VStack {
             Text("Weight")
+                .font(.caption2)
                 .bold()
-            
+            Spacer()
             Picker("Weight", selection: $viewModel.weight) {
                 ForEach(50..<300) {
-                    Text("\($0) kg")
+                    Text("\($0)")
                 }
             }
             .pickerStyle(.wheel)
-            .frame(height: 50)
+//            .frame(width: 100)
         }
     }
     
@@ -87,4 +105,8 @@ struct MainView: View {
         HorizontalPickerView(viewModel: viewModel)
     }
     
+}
+
+#Preview {
+    MainView()
 }

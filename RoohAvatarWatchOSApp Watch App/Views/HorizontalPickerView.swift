@@ -11,37 +11,72 @@ import SwiftUI
 struct HorizontalPickerView: View {
     private let itemSize: CGFloat = 100
     
-    let images = ["circle", "square", "square.and.arrow.up", "pencil", "eraser"].map { AvatarModel(imageName: $0) }
     @ObservedObject var viewModel: MainViewModel
     
     var body: some View {
-        ScrollViewReader { proxy in
-            ScrollView(.horizontal) {
-                LazyHStack {
-                    ForEach(images) { image in
-                        
-                        Image(systemName: image.imageName)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: itemSize, height: itemSize)
-                            .contentShape(Rectangle())
-                            .gesture(TapGesture().onEnded {
-                                viewModel.selectedImage = image.imageName
-                                withAnimation {
-                                    proxy.scrollTo(image, anchor: .center)
-                                }
-                            })
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 15)
-                                    .stroke(Color.purple,
-                                            lineWidth: viewModel.selectedImage == image.imageName ? 5 : 0)
-                            )
+        ZStack {
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal) {
+                    LazyHStack {
+                        ForEach(viewModel.images) { image in
+                            Image(systemName: image.imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: itemSize, height: itemSize)
+                                .contentShape(Rectangle())
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .stroke(Color.purple,
+                                                lineWidth: viewModel.selectedImage == image.imageName ? 5 : 0)
+                                )
+                        }
                     }
-                    
+                    .padding(2)
                 }
-                .padding(2)
+                .contentMargins(.horizontal, 50, for: .scrollContent)
+                .onAppear {
+                    proxy.scrollTo(viewModel.selectedImage, anchor: .center)
+                }
+                .onChange(of: viewModel.selectedImage) { oldValue, newValue in
+                    withAnimation {
+                        proxy.scrollTo(viewModel.selectedImage, anchor: .center)
+                    }
+                }
             }
+            controls
         }
+        
+    }
+    
+    var controls: some View {
+        HStack {
+            Image(systemName: "arrowshape.left.circle")
+                .resizable()
+                .frame(width: 30, height: 30)
+                .onTapGesture {
+                    viewModel.selectPrevImage()
+                }
+                .padding(-2)
+                .background(
+                    Circle()
+                        .foregroundStyle(.black)
+                )
+                
+            
+            Spacer()
+            
+            Image(systemName: "arrowshape.right.circle")
+                .resizable()
+                .frame(width: 30, height: 30)
+                .onTapGesture {
+                    viewModel.selectNextImage()
+                }
+                .padding(-2)
+                .background(
+                    Circle()
+                        .foregroundStyle(.black)
+                )
+        }.foregroundStyle(.white)
     }
     
 }

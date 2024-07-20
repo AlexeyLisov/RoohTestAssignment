@@ -13,23 +13,30 @@ struct MainView: View {
     @ObservedObject var viewModel = MainViewModel()
     
     var body: some View {
+        
+        TabView {
+            imagesScrollView
+            agePicker
+            heightPicker
+            weightPicker
+            sendButtonView
+        }
+        .tabViewStyle(.verticalPage)
+        
+    }
+    
+    var parametersView: some View {
         VStack {
-            ScrollView {
-                VStack {
-                    imagesScrollView
-                }
-                
-                VStack {
-                    agePicker
-                    heightPicker
-                    weightPicker
-                }
-                .labelsHidden()
-                
-                Button("Send to iPhone") {
-                    viewModel.sendAvatarToiPhone()
-                }
-            }
+            agePicker
+            heightPicker
+            weightPicker
+        }
+        .labelsHidden()
+    }
+    
+    var sendButtonView: some View {
+        Button("Send to iPhone") {
+            viewModel.sendAvatarToiPhone()
         }
     }
     

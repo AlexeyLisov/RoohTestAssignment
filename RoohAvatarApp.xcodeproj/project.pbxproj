@@ -36,6 +36,8 @@
 		8AB96F212C4AB79D00693B3B /* AvatarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F202C4AB79D00693B3B /* AvatarModel.swift */; };
 		8AB96F252C4ABD3300693B3B /* AvatarCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F242C4ABD3300693B3B /* AvatarCollectionViewModel.swift */; };
 		8AB96F282C4BB61400693B3B /* WatchConnectivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F272C4BB61400693B3B /* WatchConnectivityService.swift */; };
+		8AB96F2B2C4C2F7000693B3B /* WatchConnectivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F2A2C4C2F7000693B3B /* WatchConnectivityService.swift */; };
+		8AB96F2D2C4C3B4600693B3B /* RoohAvatarApp.app in Resources */ = {isa = PBXBuildFile; fileRef = 8A59AB652C4962B2009E6BC6 /* RoohAvatarApp.app */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,6 +128,7 @@
 		8AB96F202C4AB79D00693B3B /* AvatarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarModel.swift; sourceTree = "<group>"; };
 		8AB96F242C4ABD3300693B3B /* AvatarCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarCollectionViewModel.swift; sourceTree = "<group>"; };
 		8AB96F272C4BB61400693B3B /* WatchConnectivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityService.swift; sourceTree = "<group>"; };
+		8AB96F2A2C4C2F7000693B3B /* WatchConnectivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,6 +188,7 @@
 				8A59ABAE2C4963A6009E6BC6 /* RoohAvatarWatchOSApp Watch AppTests */,
 				8A59ABB82C4963A6009E6BC6 /* RoohAvatarWatchOSApp Watch AppUITests */,
 				8A59AB662C4962B2009E6BC6 /* Products */,
+				8AB96F2C2C4C3B4600693B3B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -238,6 +242,7 @@
 		8A59AB9D2C4963A4009E6BC6 /* RoohAvatarWatchOSApp Watch App */ = {
 			isa = PBXGroup;
 			children = (
+				8AB96F292C4C2F5900693B3B /* Services */,
 				8AB96F1F2C4AB78B00693B3B /* Models */,
 				8AB96F1C2C4AB74300693B3B /* ViewModels */,
 				8AB96F172C4AB70400693B3B /* Views */,
@@ -342,6 +347,21 @@
 				8AB96F272C4BB61400693B3B /* WatchConnectivityService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		8AB96F292C4C2F5900693B3B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				8AB96F2A2C4C2F7000693B3B /* WatchConnectivityService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		8AB96F2C2C4C3B4600693B3B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -540,6 +560,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8AB96F2D2C4C3B4600693B3B /* RoohAvatarApp.app in Resources */,
 				8A59ABA62C4963A6009E6BC6 /* Preview Assets.xcassets in Resources */,
 				8A59ABA32C4963A6009E6BC6 /* Assets.xcassets in Resources */,
 			);
@@ -608,6 +629,7 @@
 				8AB96F1B2C4AB72E00693B3B /* MainView.swift in Sources */,
 				8A59ABA12C4963A4009E6BC6 /* ContentView.swift in Sources */,
 				8A59AB9F2C4963A4009E6BC6 /* RoohAvatarWatchOSAppApp.swift in Sources */,
+				8AB96F2B2C4C2F7000693B3B /* WatchConnectivityService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -722,7 +744,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -730,6 +752,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Debug;
 		};
@@ -779,13 +802,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Release;
 		};
@@ -949,7 +973,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 10.4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Debug;
 		};
@@ -979,7 +1003,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 10.4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Release;
 		};

@@ -11,9 +11,17 @@ import UIKit
 
 
 struct ContentView: View {
+    
+    let service = WatchConnectivityService()
     var body: some View {
         VStack {
             MainView()
+                .onAppear {
+                    service.setupWCSession()
+                    Task {
+                        await service.activateSession()
+                    }
+                }
         }
         .padding()
     }

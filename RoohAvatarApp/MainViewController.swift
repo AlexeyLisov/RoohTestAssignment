@@ -8,6 +8,7 @@
 import UIKit
 import SwiftUI
 import Combine
+import WatchConnectivity
 
 struct CharacterModel: Codable {
     var avatarModel: AvatarModel
@@ -16,14 +17,12 @@ struct CharacterModel: Codable {
     var weight: Int
 }
 
-enum WatchConnectionError: Error {
-    case sessionNotSupported
-}
 
 enum SendingMessageStatus {
     case notRequested
     case creatingSession
     case sendingMessage
+    case error(WCError)
     case success
 }
 
@@ -36,7 +35,7 @@ class MainViewModel: ObservableObject {
     
     var avatarCollectionViewModel: AvatarCollectionViewModel
     
-    var alertPublisher = PassthroughSubject<WatchConnectionError, Never>()
+//    var alertPublisher = PassthroughSubject<SendingMessageStatus, Never>()
     let watchService: WatchConnectivityServiceProtocol
     
     init(watchService: WatchConnectivityService = WatchConnectivityService()) {
@@ -48,7 +47,8 @@ class MainViewModel: ObservableObject {
         
         sendingMessageStatus = .creatingSession
         guard self.watchService.setupWCSession() else {
-            alertPublisher.send(.sessionNotSupported)
+            sendingMessageStatus = .error(.init(.sessionNotSupported))
+//            alertPublisher.send(.error(.sessionNotSupported))
             sendingMessageStatus = .notRequested
             return
         }
@@ -70,7 +70,13 @@ class MainViewModel: ObservableObject {
                 sendingMessageStatus = .sendingMessage
             }
             
-//            await self.watchService.sendMessageToWatch(data: message)
+            do {
+                try await self.watchService.sendMessageToWatch(data: message)
+            } catch let error as WCError {
+//                alertPublisher.send(.error(error.code))
+                sendingMessageStatus = .error(error)
+                return
+            }
             
             await MainActor.run {
                 sendingMessageStatus = .success
@@ -338,12 +344,26 @@ class MainViewController: UIViewController {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         self.sendingMessageStatusStackView.isHidden = true
                     }
+                case .error(let error):
+                    self.handleError(error: error)
                 }
             })
         }
         .store(in: &cancellables)
+    }
+    
+    private func handleError(error: WCError) {
+        presentAlert(message: error.localizedDescription)
+    }
+    
+    private func presentAlert(message: String) {
+        let alertController = UIAlertController(title: "Alert", 
+                                                message: message,
+                                                preferredStyle: .alert)
         
-
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+        }))
+        self.present(alertController, animated: true, completion: nil)
     }
 }
 

@@ -10,8 +10,6 @@ import Combine
 
 class AvatarCollectionViewModel {
     
-//    var selectedAvatarModel = PassthroughSubject<AvatarModel, Never>()
-    
     private var images: [AvatarModel]
     @Published private(set) var selectedIndexPath: IndexPath
     
@@ -22,7 +20,6 @@ class AvatarCollectionViewModel {
     init(images: [AvatarModel]) {
         self.images = images
         self.selectedIndexPath = IndexPath(item: 0, section: 0)
-//        self.selectedAvatarModel.send(avatarModel(for: self.selectedIndexPath))
     }
     
     func numberOfItems() -> Int {

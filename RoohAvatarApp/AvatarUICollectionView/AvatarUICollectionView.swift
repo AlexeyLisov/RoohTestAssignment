@@ -96,6 +96,13 @@ class AvatarCollectionViewController: UIViewController {
     }
 }
 
+extension AvatarCollectionViewController {
+    override func viewDidAppear(_ animated: Bool) {
+        self.collectionView.scrollToItem(at: self.viewModel.selectedIndexPath,
+                                         at: .centeredHorizontally, animated: true)
+    }
+}
+
 extension AvatarCollectionViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.numberOfItems()

@@ -9,11 +9,6 @@ import SwiftUI
 import UIKit
 
 
-struct AvatarModel: Codable {
-    let imageName: String
-}
-
-
 class AvatarCollectionViewController: UIViewController {
     
     private var viewModel: AvatarCollectionViewModel!

@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct AvatarModel: Identifiable, Hashable {
+struct AvatarModel: Identifiable, Hashable, Codable {
     var id: String {
         return imageName
     }

@@ -41,4 +41,12 @@ class AvatarCollectionViewModel {
     func isSelectedItem(at indexPath: IndexPath) -> Bool {
         return selectedIndexPath == indexPath
     }
+    
+    func selectItem(with model: AvatarModel) {
+        guard let index = images.firstIndex(of: model) else {
+            return
+        }
+        
+        selectItem(at: IndexPath(item: index, section: 0))
+    }
 }

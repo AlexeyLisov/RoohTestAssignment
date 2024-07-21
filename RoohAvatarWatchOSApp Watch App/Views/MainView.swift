@@ -47,7 +47,6 @@ struct MainView: View {
         Button("Send to iPhone") {
             
             isPickerFocused = false
-            
             viewModel.sendAvatarToiPhone()
         }
     }
@@ -65,7 +64,6 @@ struct MainView: View {
             }
             .pickerStyle(.wheel)
             .focused($isPickerFocused)
-//            .frame(width: 100)
         }
     }
     
@@ -81,7 +79,6 @@ struct MainView: View {
                 }
             }
             .pickerStyle(.wheel)
-//            .frame(width: 100)
         }
     }
     
@@ -97,7 +94,6 @@ struct MainView: View {
                 }
             }
             .pickerStyle(.wheel)
-//            .frame(width: 100)
         }
     }
     

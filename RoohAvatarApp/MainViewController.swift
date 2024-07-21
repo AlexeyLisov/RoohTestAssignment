@@ -10,13 +10,6 @@ import SwiftUI
 import Combine
 import WatchConnectivity
 
-struct CharacterModel: Codable {
-    var avatarModel: AvatarModel
-    var age: Int
-    var height: Int
-    var weight: Int
-}
-
 
 enum SendingMessageStatus {
     case notRequested
@@ -35,12 +28,23 @@ class MainViewModel: ObservableObject {
     
     var avatarCollectionViewModel: AvatarCollectionViewModel
     
-//    var alertPublisher = PassthroughSubject<SendingMessageStatus, Never>()
     let watchService: WatchConnectivityServiceProtocol
+    var cancellables = Set<AnyCancellable>()
     
     init(watchService: WatchConnectivityService = WatchConnectivityService()) {
         self.watchService = watchService
         self.avatarCollectionViewModel = AvatarCollectionViewModel.mock
+        
+        // TODO: check reference cycle
+        self.watchService.messagePublisher.sink { message in
+            
+            guard let characterModel = MessageCoder().decodeMessage(message: message) else {
+                return
+            }
+            
+            self.mapModel(characterModel: characterModel)
+        }
+        .store(in: &cancellables)
     }
     
     func sendAvatarToAppleWatch() {
@@ -48,20 +52,14 @@ class MainViewModel: ObservableObject {
         sendingMessageStatus = .creatingSession
         guard self.watchService.setupWCSession() else {
             sendingMessageStatus = .error(.init(.sessionNotSupported))
-//            alertPublisher.send(.error(.sessionNotSupported))
             sendingMessageStatus = .notRequested
             return
         }
         
-        let avatarModel = CharacterModel(avatarModel: avatarCollectionViewModel.avatarModel,
+        let characterModel = CharacterModel(avatarModel: avatarCollectionViewModel.avatarModel,
                                          age: age, height: height, weight: weight)
         
-        guard let encodedModel = try? JSONEncoder().encode(avatarModel) else {
-            print("Encoding failed")
-            return
-        }
-        
-        let message = ["characterModel": encodedModel]
+        let encodedMessage = MessageCoder().encodeMessage(type: characterModel)
         
         Task {
             await self.watchService.activateSession()
@@ -71,9 +69,8 @@ class MainViewModel: ObservableObject {
             }
             
             do {
-                try await self.watchService.sendMessageToWatch(data: message)
+                try await self.watchService.sendMessageToWatch(data: encodedMessage)
             } catch let error as WCError {
-//                alertPublisher.send(.error(error.code))
                 sendingMessageStatus = .error(error)
                 return
             }
@@ -82,8 +79,15 @@ class MainViewModel: ObservableObject {
                 sendingMessageStatus = .success
             }
         }
-        
     }
+    
+    func mapModel(characterModel: CharacterModel) {
+        self.age = characterModel.age
+        self.height = characterModel.height
+        self.weight = characterModel.weight
+        self.avatarCollectionViewModel.selectItem(with: characterModel.avatarModel)
+    }
+    
 }
 
 

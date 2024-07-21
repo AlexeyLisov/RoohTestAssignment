@@ -10,6 +10,9 @@
 		8A20A9562C4C76E200C8082C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A20A9552C4C76E200C8082C /* Assets.xcassets */; };
 		8A20A95A2C4C774600C8082C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A20A9572C4C76FC00C8082C /* Assets.xcassets */; };
 		8A20A95B2C4C786400C8082C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A59AB712C4962B3009E6BC6 /* Assets.xcassets */; };
+		8A20A95C2C4CEB6300C8082C /* AvatarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F202C4AB79D00693B3B /* AvatarModel.swift */; };
+		8A20A95E2C4CEBBA00C8082C /* CharacterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A20A95D2C4CEBBA00C8082C /* CharacterModel.swift */; };
+		8A20A95F2C4CEBBA00C8082C /* CharacterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A20A95D2C4CEBBA00C8082C /* CharacterModel.swift */; };
 		8A59AB692C4962B2009E6BC6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59AB682C4962B2009E6BC6 /* AppDelegate.swift */; };
 		8A59AB6B2C4962B2009E6BC6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59AB6A2C4962B2009E6BC6 /* SceneDelegate.swift */; };
 		8A59AB6D2C4962B2009E6BC6 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59AB6C2C4962B2009E6BC6 /* MainViewController.swift */; };
@@ -31,6 +34,8 @@
 		8A59ABDE2C4A3AE8009E6BC6 /* UIViewPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABDD2C4A3AE8009E6BC6 /* UIViewPreview.swift */; };
 		8A59ABE02C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59ABDF2C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift */; };
 		8A6A7E632C4C6B8600A087E2 /* WatchConnectivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F272C4BB61400693B3B /* WatchConnectivityService.swift */; };
+		8AAEE7582C4CF34800A1D2D1 /* MessageCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAEE7572C4CF34800A1D2D1 /* MessageCoder.swift */; };
+		8AAEE7592C4CFFC000A1D2D1 /* MessageCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAEE7572C4CF34800A1D2D1 /* MessageCoder.swift */; };
 		8AB96F142C4A4DEE00693B3B /* SnappingCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F132C4A4DEE00693B3B /* SnappingCollectionViewLayout.swift */; };
 		8AB96F192C4AB71400693B3B /* HorizontalPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F182C4AB71400693B3B /* HorizontalPickerView.swift */; };
 		8AB96F1B2C4AB72E00693B3B /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F1A2C4AB72E00693B3B /* MainView.swift */; };
@@ -96,6 +101,7 @@
 /* Begin PBXFileReference section */
 		8A20A9552C4C76E200C8082C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8A20A9572C4C76FC00C8082C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = RoohAvatarApp/Assets.xcassets; sourceTree = SOURCE_ROOT; };
+		8A20A95D2C4CEBBA00C8082C /* CharacterModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterModel.swift; sourceTree = "<group>"; };
 		8A59AB652C4962B2009E6BC6 /* RoohAvatarApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RoohAvatarApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A59AB682C4962B2009E6BC6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8A59AB6A2C4962B2009E6BC6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -123,6 +129,7 @@
 		8A59ABDB2C4A3A7F009E6BC6 /* AvatarUICollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarUICollectionView.swift; sourceTree = "<group>"; };
 		8A59ABDD2C4A3AE8009E6BC6 /* UIViewPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewPreview.swift; sourceTree = "<group>"; };
 		8A59ABDF2C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarUICollectionViewCell.swift; sourceTree = "<group>"; };
+		8AAEE7572C4CF34800A1D2D1 /* MessageCoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCoder.swift; sourceTree = "<group>"; };
 		8AB96F132C4A4DEE00693B3B /* SnappingCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappingCollectionViewLayout.swift; sourceTree = "<group>"; };
 		8AB96F182C4AB71400693B3B /* HorizontalPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalPickerView.swift; sourceTree = "<group>"; };
 		8AB96F1A2C4AB72E00693B3B /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -244,7 +251,6 @@
 			isa = PBXGroup;
 			children = (
 				8A20A9552C4C76E200C8082C /* Assets.xcassets */,
-				8AB96F1F2C4AB78B00693B3B /* Models */,
 				8AB96F1C2C4AB74300693B3B /* ViewModels */,
 				8AB96F172C4AB70400693B3B /* Views */,
 				8A59AB9E2C4963A4009E6BC6 /* RoohAvatarWatchOSAppApp.swift */,
@@ -311,8 +317,10 @@
 		8A6A7E612C4C6AAF00A087E2 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				8AB96F1F2C4AB78B00693B3B /* Models */,
 				8A59AB712C4962B3009E6BC6 /* Assets.xcassets */,
 				8A6A7E622C4C6B5500A087E2 /* WatchConnectivityService */,
+				8AAEE7572C4CF34800A1D2D1 /* MessageCoder.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -346,6 +354,7 @@
 			isa = PBXGroup;
 			children = (
 				8AB96F202C4AB79D00693B3B /* AvatarModel.swift */,
+				8A20A95D2C4CEBBA00C8082C /* CharacterModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -590,10 +599,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				8AB96F142C4A4DEE00693B3B /* SnappingCollectionViewLayout.swift in Sources */,
+				8AAEE7582C4CF34800A1D2D1 /* MessageCoder.swift in Sources */,
 				8A59ABD52C4995C2009E6BC6 /* Coordinator.swift in Sources */,
 				8A59ABE02C4A3BF4009E6BC6 /* AvatarUICollectionViewCell.swift in Sources */,
 				8AB96F252C4ABD3300693B3B /* AvatarCollectionViewModel.swift in Sources */,
 				8A59ABDE2C4A3AE8009E6BC6 /* UIViewPreview.swift in Sources */,
+				8A20A95E2C4CEBBA00C8082C /* CharacterModel.swift in Sources */,
+				8A20A95C2C4CEB6300C8082C /* AvatarModel.swift in Sources */,
 				8A59ABDC2C4A3A7F009E6BC6 /* AvatarUICollectionView.swift in Sources */,
 				8A59ABD92C4995D7009E6BC6 /* UIViewControllerPreview.swift in Sources */,
 				8A59AB6D2C4962B2009E6BC6 /* MainViewController.swift in Sources */,
@@ -626,10 +638,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A6A7E632C4C6B8600A087E2 /* WatchConnectivityService.swift in Sources */,
+				8AAEE7592C4CFFC000A1D2D1 /* MessageCoder.swift in Sources */,
 				8AB96F1E2C4AB75200693B3B /* MainViewModel.swift in Sources */,
 				8AB96F192C4AB71400693B3B /* HorizontalPickerView.swift in Sources */,
 				8AB96F212C4AB79D00693B3B /* AvatarModel.swift in Sources */,
 				8AB96F1B2C4AB72E00693B3B /* MainView.swift in Sources */,
+				8A20A95F2C4CEBBA00C8082C /* CharacterModel.swift in Sources */,
 				8A59ABA12C4963A4009E6BC6 /* ContentView.swift in Sources */,
 				8A59AB9F2C4963A4009E6BC6 /* RoohAvatarWatchOSAppApp.swift in Sources */,
 			);

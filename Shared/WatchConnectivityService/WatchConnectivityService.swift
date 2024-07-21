@@ -21,11 +21,7 @@ protocol WatchConnectivityServiceProtocol {
 class WatchConnectivityService: NSObject {
     var session: WCSession!
     
-    var messagePublisherSubject: PassthroughSubject<[String: Any], Never>
-    
-    override init() {
-        self.messagePublisherSubject = PassthroughSubject<[String: Any], Never>()
-    }
+    var messagePublisherSubject = PassthroughSubject<[String: Any], Never>()
     
     private var continuation: CheckedContinuation<Void, Never>?
 }
@@ -70,13 +66,19 @@ extension WatchConnectivityService: WatchConnectivityServiceProtocol {
     
     func sendMessageToWatch(data: [String: Any]) async throws {
         
-        try await withCheckedThrowingContinuation { continuation in
+        print(session)
+        
+        let reply = try await withCheckedThrowingContinuation { continuation in
             session?.sendMessage(data, replyHandler: { reply in
+                print("message", reply)
                 continuation.resume(returning: reply)
             }, errorHandler: { error in
+                print("error", String(describing: error))
                 continuation.resume(throwing: error)
             })
         }
+        
+        print(reply)
     }
 }
 

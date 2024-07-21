@@ -19,9 +19,6 @@ enum SendingMessageStatus {
     case success
 }
 
-
-
-
 import UIKit
 import Combine
 
@@ -61,9 +58,11 @@ class MainViewController: UIViewController {
 
     private func generateTextField(placeHolder: String) -> UITextField {
         let textField = UITextField()
+        textField.textAlignment = .center
         textField.placeholder = placeHolder
         textField.keyboardType = .numberPad
         textField.returnKeyType = .done
+        textField.borderStyle = .roundedRect
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         textField.inputAccessoryView = generateDoneToolbar(textfield: textField)
@@ -74,6 +73,7 @@ class MainViewController: UIViewController {
     private func generateTextLabel(text: String) -> UILabel {
         let label = UILabel()
         label.text = text
+        label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }
@@ -117,7 +117,7 @@ class MainViewController: UIViewController {
             collectionViewController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             collectionViewController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
             collectionViewController.view.widthAnchor.constraint(equalTo: view.widthAnchor),
-            collectionViewController.view.heightAnchor.constraint(equalToConstant: 150),
+            collectionViewController.view.heightAnchor.constraint(equalToConstant: 300),
         ])
         
         self.ageLabel = generateTextLabel(text: "Age")
@@ -131,33 +131,41 @@ class MainViewController: UIViewController {
         view.backgroundColor = .white
         
         let ageStackView = UIStackView(arrangedSubviews: [ageLabel, ageTextField])
-        ageStackView.axis = .horizontal
+        ageStackView.axis = .vertical
         ageStackView.spacing = 10
         ageStackView.translatesAutoresizingMaskIntoConstraints = false
         
         let heightStackView = UIStackView(arrangedSubviews: [heightLabel, heightTextField])
-        heightStackView.axis = .horizontal
+        heightStackView.axis = .vertical
         heightStackView.spacing = 10
         heightStackView.translatesAutoresizingMaskIntoConstraints = false
         
         let weightStackView = UIStackView(arrangedSubviews: [weightLabel, weightTextField])
-        weightStackView.axis = .horizontal
+        weightStackView.axis = .vertical
         weightStackView.spacing = 10
         weightStackView.translatesAutoresizingMaskIntoConstraints = false
         
         let mainStackView = UIStackView(arrangedSubviews: [ageStackView, heightStackView, weightStackView])
-        mainStackView.axis = .vertical
+        mainStackView.axis = .horizontal
         mainStackView.spacing = 20
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(mainStackView)
         
         NSLayoutConstraint.activate([
+            mainStackView.topAnchor.constraint(equalTo: collectionViewController.view.bottomAnchor, constant: 20),
+            mainStackView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            mainStackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             mainStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             mainStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            ageTextField.widthAnchor.constraint(equalToConstant: 100),
-            heightTextField.widthAnchor.constraint(equalToConstant: 100),
-            weightTextField.widthAnchor.constraint(equalToConstant: 100)
+            
+            mainStackView.heightAnchor.constraint(equalToConstant: 60),
+            
+            ageTextField.widthAnchor.constraint(equalTo: heightTextField.widthAnchor),
+            heightTextField.widthAnchor.constraint(equalTo: weightTextField.widthAnchor),
+            ageTextField.heightAnchor.constraint(equalToConstant: 30),
+            ageTextField.heightAnchor.constraint(equalTo: heightTextField.heightAnchor),
+            heightTextField.heightAnchor.constraint(equalTo: weightTextField.heightAnchor)
         ])
         
         sendingMessageStatus = UITextView()
@@ -205,7 +213,7 @@ class MainViewController: UIViewController {
         sendCharacterButton = UIButton(type: .system)
         
         // Set button title and appearance
-        sendCharacterButton.setTitle("Filled Button", for: .normal)
+        sendCharacterButton.setTitle("Send to Apple Watch", for: .normal)
         sendCharacterButton.setTitleColor(.white, for: .normal)
         sendCharacterButton.backgroundColor = UIColor.systemBlue
         sendCharacterButton.layer.cornerRadius = 10
@@ -221,8 +229,8 @@ class MainViewController: UIViewController {
             sendCharacterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             sendCharacterButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             sendCharacterButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            sendCharacterButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10),
-            sendCharacterButton.heightAnchor.constraint(equalToConstant: 40),
+            sendCharacterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            sendCharacterButton.heightAnchor.constraint(equalToConstant: 50),
         ])
         
     }
@@ -230,8 +238,6 @@ class MainViewController: UIViewController {
     @objc func buttonTapped() {
         viewModel.sendAvatarToAppleWatch()
     }
-    
-//    private func
     
     private func setupBindings() {
         ageTextField.textPublisher
@@ -250,6 +256,21 @@ class MainViewController: UIViewController {
             .receive(on: RunLoop.main)
             .map({ Int($0) ?? 0 })
             .assign(to: \.weight, on: viewModel)
+            .store(in: &cancellables)
+        
+        viewModel.$age
+            .map({String($0)})
+            .assign(to: \.ageTextField.text, on: self)
+            .store(in: &cancellables)
+        
+        viewModel.$height
+            .map({String($0)})
+            .assign(to: \.heightTextField.text, on: self)
+            .store(in: &cancellables)
+        
+        viewModel.$weight
+            .map({String($0)})
+            .assign(to: \.weightTextField.text, on: self)
             .store(in: &cancellables)
         
         // TODO: check ref cycle
@@ -299,6 +320,14 @@ class MainViewController: UIViewController {
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
         }))
         self.present(alertController, animated: true, completion: nil)
+    }
+}
+
+extension MainViewController {
+    override func viewWillAppear(_ animated: Bool) {
+        Task {
+            await self.viewModel.watchService.activateSession()
+        }
     }
 }
 

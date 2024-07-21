@@ -21,12 +21,17 @@ class MainViewModel: ObservableObject {
     let watchService: WatchConnectivityServiceProtocol
     var cancellables = Set<AnyCancellable>()
     
+    
     init(watchService: WatchConnectivityService = WatchConnectivityService()) {
         self.watchService = watchService
         self.avatarCollectionViewModel = AvatarCollectionViewModel.mock
         
+        self.watchService.setupWCSession()
+        
         // TODO: check reference cycle
-        self.watchService.messagePublisher.sink { message in
+        self.watchService.messagePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { message in
             
             guard let characterModel = MessageCoder().decodeMessage(message: message) else {
                 return

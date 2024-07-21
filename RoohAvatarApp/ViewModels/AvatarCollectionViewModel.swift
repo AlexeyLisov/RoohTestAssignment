@@ -13,7 +13,7 @@ class AvatarCollectionViewModel {
 //    var selectedAvatarModel = PassthroughSubject<AvatarModel, Never>()
     
     private var images: [AvatarModel]
-    private(set) var selectedIndexPath: IndexPath
+    @Published private(set) var selectedIndexPath: IndexPath
     
     var avatarModel: AvatarModel {
         images[selectedIndexPath.item]

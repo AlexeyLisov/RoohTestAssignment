@@ -25,12 +25,12 @@ class SnappingCollectionViewLayout: UICollectionViewFlowLayout {
         let collectionCenter = collectionView!.frame.size.width / 2
         let offset = collectionView!.contentOffset.x
         let normalizedCenter = attribute.center.x - offset
-        let maxDistance = self.itemSize.height + self.minimumLineSpacing
+        let maxDistance = self.itemSize.width + self.minimumLineSpacing
         
         let distance = min(abs(collectionCenter - normalizedCenter), maxDistance)
         let ratio = (maxDistance - distance) / maxDistance
-        let standardItemScale: CGFloat = 0.5
-        let scale = ratio * (1 - standardItemScale) + standardItemScale
+        let standardItemScale: CGFloat = 0.75
+        let scale = min(ratio * (1 - standardItemScale) + standardItemScale, 1.0)
         attribute.transform3D = CATransform3DScale(CATransform3DIdentity, scale, scale, 1)
     }
 

@@ -7,12 +7,14 @@
 
 import SwiftUI
 import UIKit
-
+import Combine
 
 class AvatarCollectionViewController: UIViewController {
     
     private var viewModel: AvatarCollectionViewModel!
     private var collectionView: UICollectionView!
+    
+    private var cancellables = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,13 +24,23 @@ class AvatarCollectionViewController: UIViewController {
     
     func setupViewModel(viewModel: AvatarCollectionViewModel) {
         self.viewModel = viewModel
+        
+        self.viewModel.$selectedIndexPath
+            .sink { index in
+                self.collectionView.scrollToItem(at: index,
+                                             at: .centeredHorizontally, animated: true)
+        }
+        .store(in: &cancellables)
     }
+    
+    private let cellWidth: CGFloat = 250
+    private let cellHeight: CGFloat = 250
     
     private func setupCollectionView() {
         let layout = SnappingCollectionViewLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 20
-        layout.itemSize = CGSize(width: 100, height: 100)
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
         
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -47,7 +59,6 @@ class AvatarCollectionViewController: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            view.heightAnchor.constraint(equalToConstant: 140)
         ])
     }
     
@@ -55,20 +66,34 @@ class AvatarCollectionViewController: UIViewController {
         collectionView.scrollToItem(at: viewModel.selectedIndexPath, at: .centeredHorizontally, animated: true)
     }
     
-    private func selectItemClosestToCenter() {
+    private func itemIndexClosestToCenter() -> IndexPath? {
         let centerPoint = CGPoint(x: collectionView.bounds.midX, y: collectionView.bounds.midY)
-        if let indexPath = collectionView.indexPathForItem(at: centerPoint) {
-            withAnimation {
-                viewModel.selectItem(at: indexPath)
-                collectionView.reloadData()
-            }
+        
+        var closestCellIndex: IndexPath?
+        var closestDistance: CGFloat = .greatestFiniteMagnitude
+        
+        for cell in collectionView.visibleCells {
+            let cellCenter = cell.frame.midX
+            let distance = abs(centerPoint.x - cellCenter)
             
+            if distance < closestDistance {
+                closestDistance = distance
+                closestCellIndex = collectionView.indexPath(for: cell)
+            }
         }
+        return closestCellIndex
     }
     
-    private let cellWidth: CGFloat = 100
-    private let cellHeight: CGFloat = 100
-    private let minimumInteritemSpacing: CGFloat = 10
+    private func selectItemClosestToCenter() {
+    
+        if let indexPath = itemIndexClosestToCenter() {
+            withAnimation {
+                viewModel.selectItem(at: indexPath)
+            }
+        } else {
+            print("Warning: index path for closest cell not found")
+        }
+    }
 }
 
 extension AvatarCollectionViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -90,8 +115,6 @@ extension AvatarCollectionViewController: UICollectionViewDelegate, UICollection
         scrollToSelectedItem()
     }
     
-    
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: cellWidth, height: cellHeight)
     }
@@ -103,18 +126,12 @@ extension AvatarCollectionViewController: UICollectionViewDelegate, UICollection
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         selectItemClosestToCenter()
-        scrollToSelectedItem()
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if !decelerate {
             selectItemClosestToCenter()
-            scrollToSelectedItem()
         }
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        selectItemClosestToCenter()
     }
 }
 

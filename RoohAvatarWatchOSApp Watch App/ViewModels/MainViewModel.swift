@@ -11,7 +11,7 @@ import Combine
 class MainViewModel: ObservableObject {
     
     let service = WatchConnectivityService()
-    let images = ["circle", "square", "square.and.arrow.up", "pencil", "eraser"].map { AvatarModel(imageName: $0) }
+    let images = AvatarsModel.models
     
     var selectedImageIndex: [AvatarModel].Index
     @Published var selectedImage: String = ""

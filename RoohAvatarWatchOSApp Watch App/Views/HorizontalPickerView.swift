@@ -19,7 +19,7 @@ struct HorizontalPickerView: View {
                 ScrollView(.horizontal) {
                     LazyHStack {
                         ForEach(viewModel.images) { image in
-                            Image(systemName: image.imageName)
+                            Image(image.imageName, bundle: nil)
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: itemSize, height: itemSize)

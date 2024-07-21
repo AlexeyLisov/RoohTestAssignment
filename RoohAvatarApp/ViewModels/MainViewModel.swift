@@ -24,7 +24,7 @@ class MainViewModel: ObservableObject {
     
     init(watchService: WatchConnectivityService = WatchConnectivityService()) {
         self.watchService = watchService
-        self.avatarCollectionViewModel = AvatarCollectionViewModel.mock
+        self.avatarCollectionViewModel = AvatarCollectionViewModel(images: AvatarsModel.models)
         
         self.watchService.setupWCSession()
         

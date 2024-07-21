@@ -12,6 +12,8 @@
 		8A20A95C2C4CEB6300C8082C /* AvatarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB96F202C4AB79D00693B3B /* AvatarModel.swift */; };
 		8A20A95E2C4CEBBA00C8082C /* CharacterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A20A95D2C4CEBBA00C8082C /* CharacterModel.swift */; };
 		8A20A95F2C4CEBBA00C8082C /* CharacterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A20A95D2C4CEBBA00C8082C /* CharacterModel.swift */; };
+		8A53C39F2C4D51B800E65D20 /* SharedAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A53C39E2C4D51B800E65D20 /* SharedAssets.xcassets */; };
+		8A53C3A02C4D51B800E65D20 /* SharedAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A53C39E2C4D51B800E65D20 /* SharedAssets.xcassets */; };
 		8A59AB692C4962B2009E6BC6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59AB682C4962B2009E6BC6 /* AppDelegate.swift */; };
 		8A59AB6B2C4962B2009E6BC6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59AB6A2C4962B2009E6BC6 /* SceneDelegate.swift */; };
 		8A59AB6D2C4962B2009E6BC6 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59AB6C2C4962B2009E6BC6 /* MainViewController.swift */; };
@@ -101,6 +103,7 @@
 		8A20A9552C4C76E200C8082C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8A20A9572C4C76FC00C8082C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = RoohAvatarApp/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		8A20A95D2C4CEBBA00C8082C /* CharacterModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterModel.swift; sourceTree = "<group>"; };
+		8A53C39E2C4D51B800E65D20 /* SharedAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SharedAssets.xcassets; sourceTree = "<group>"; };
 		8A59AB652C4962B2009E6BC6 /* RoohAvatarApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RoohAvatarApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A59AB682C4962B2009E6BC6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8A59AB6A2C4962B2009E6BC6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -319,6 +322,7 @@
 				8AB96F1F2C4AB78B00693B3B /* Models */,
 				8A6A7E622C4C6B5500A087E2 /* WatchConnectivityService */,
 				8AAEE7572C4CF34800A1D2D1 /* MessageCoder.swift */,
+				8A53C39E2C4D51B800E65D20 /* SharedAssets.xcassets */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -546,6 +550,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A53C39F2C4D51B800E65D20 /* SharedAssets.xcassets in Resources */,
 				8A20A95A2C4C774600C8082C /* Assets.xcassets in Resources */,
 				8A59AB752C4962B3009E6BC6 /* Base in Resources */,
 			);
@@ -569,6 +574,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A53C3A02C4D51B800E65D20 /* SharedAssets.xcassets in Resources */,
 				8A59ABA62C4963A6009E6BC6 /* Preview Assets.xcassets in Resources */,
 				8A20A9562C4C76E200C8082C /* Assets.xcassets in Resources */,
 			);

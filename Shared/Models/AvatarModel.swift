@@ -15,3 +15,8 @@ struct AvatarModel: Identifiable, Hashable, Codable {
     
     let imageName: String
 }
+
+
+struct AvatarsModel {
+    static var models = Array(1...6).map({AvatarModel(imageName: "avatar_\($0)")})
+}

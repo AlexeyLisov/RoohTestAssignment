@@ -28,7 +28,7 @@ class AvatarCollectionViewModel {
     
     func image(for indexPath: IndexPath) -> UIImage? {
         let imageName = images[indexPath.item].imageName
-        return UIImage(systemName: imageName)
+        return UIImage(named: imageName)
     }
     
     func selectItem(at indexPath: IndexPath) {

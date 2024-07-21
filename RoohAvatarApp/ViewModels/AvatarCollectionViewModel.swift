@@ -47,3 +47,10 @@ class AvatarCollectionViewModel {
         selectItem(at: IndexPath(item: index, section: 0))
     }
 }
+
+extension AvatarCollectionViewModel {
+    static var mock: AvatarCollectionViewModel = {
+        let images = AvatarsModel.models
+        return AvatarCollectionViewModel(images: images)
+    }()
+}

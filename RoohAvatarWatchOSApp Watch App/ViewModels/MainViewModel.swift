@@ -24,10 +24,12 @@ class MainViewModel: ObservableObject {
     @Published var weight: Int = CharacterModel.weightAllowedRange.lowerBound
     
     var cancellables = Set<AnyCancellable>()
+    
     init() {
         self.selectedImageIndex = 0
 
         service.setupWCSession()
+        
         Task {
             await service.activateSession()
         }
@@ -39,15 +41,19 @@ class MainViewModel: ObservableObject {
                     fatalError("can't decode characterModel")
                 }
                 
-                self.age = characterModel.age
-                self.height = characterModel.height
-                self.weight = characterModel.weight
-                    
-                if let imageIndex = self.images.firstIndex(of: characterModel.avatarModel) {
-                    self.selectedImageIndex = imageIndex
-                }
+                self.mapModel(characterModel: characterModel)
 
         }.store(in: &cancellables)
+    }
+    
+    func mapModel(characterModel: CharacterModel) {
+        self.age = characterModel.age
+        self.height = characterModel.height
+        self.weight = characterModel.weight
+        
+        if let imageIndex = self.images.firstIndex(of: characterModel.avatarModel) {
+            self.selectedImageIndex = imageIndex
+        }
     }
     
     func indexForModel(model: AvatarModel) -> Int? {

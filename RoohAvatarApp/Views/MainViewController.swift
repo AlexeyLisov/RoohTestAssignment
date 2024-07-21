@@ -29,66 +29,6 @@ class MainViewController: UIViewController {
     private var viewModel = MainViewModel()
     private var cancellables = Set<AnyCancellable>()
     
-    
-    func generateDoneToolbar(textfield: UITextField) -> UIToolbar {
-        let doneToolbar: UIToolbar = UIToolbar()
-        doneToolbar.sizeToFit()
-        
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(self.doneButtonAction))
-        
-        let items = [flexSpace, done]
-        doneToolbar.items = items
-        doneToolbar.barStyle = .default
-        
-        return doneToolbar
-    }
-    
-    @objc func doneButtonAction() {
-        
-        if ageTextField.isFirstResponder {
-            heightTextField.becomeFirstResponder()
-        } else if heightTextField.isFirstResponder {
-            weightTextField.becomeFirstResponder()
-        } else if weightTextField.isFirstResponder {
-            weightTextField.resignFirstResponder()
-        }
-    }
-    
-
-    private func generateTextField(placeHolder: String) -> UITextField {
-        let textField = UITextField()
-        textField.textAlignment = .center
-        textField.placeholder = placeHolder
-        textField.keyboardType = .numberPad
-        textField.returnKeyType = .done
-        textField.borderStyle = .roundedRect
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        
-        textField.inputAccessoryView = generateDoneToolbar(textfield: textField)
-        textField.delegate = self
-        return textField
-    }
-    
-    private func generateTextLabel(text: String) -> UILabel {
-        let label = UILabel()
-        label.text = text
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }
-    
-    private func generateErrorLabel() -> UILabel {
-        let label = UILabel()
-        label.text = ""
-        label.textColor = .red
-        label.font = UIFont.preferredFont(forTextStyle: .caption2)
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }
-    
     private var collectionViewController = AvatarCollectionViewController()
     
     private var ageTextField: UITextField!
@@ -123,6 +63,236 @@ class MainViewController: UIViewController {
         self.viewModel.setInitialValues()
     }
     
+    private func handleError(error: WCError) {
+        presentAlert(message: error.localizedDescription)
+    }
+    
+    private func presentAlert(message: String) {
+        let alertController = UIAlertController(title: "Alert", 
+                                                message: message,
+                                                preferredStyle: .alert)
+        
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+        }))
+        self.present(alertController, animated: true, completion: nil)
+    }
+}
+
+// MARK: Button Actions
+extension MainViewController {
+    @objc func doneButtonAction() {
+        if ageTextField.isFirstResponder {
+            heightTextField.becomeFirstResponder()
+        } else if heightTextField.isFirstResponder {
+            weightTextField.becomeFirstResponder()
+        } else if weightTextField.isFirstResponder {
+            weightTextField.resignFirstResponder()
+        }
+    }
+    
+    @objc func buttonTapped() {
+        viewModel.sendAvatarToAppleWatch()
+    }
+}
+
+// MARK: Bindings
+extension MainViewController {
+    private var ageInteger: AnyPublisher<Int, Never> {
+        ageTextField.textPublisher
+            .map({ Int($0) ?? 0 })
+            .eraseToAnyPublisher()
+    }
+    
+    private var ageOutOfRange: AnyPublisher<Bool, Never> {
+        ageInteger
+            .map({ !CharacterModel.ageAllowedRange.contains($0) })
+            .eraseToAnyPublisher()
+    }
+    
+    private var heightInteger: AnyPublisher<Int, Never> {
+        heightTextField.textPublisher
+            .map({ Int($0) ?? 0 })
+            .eraseToAnyPublisher()
+    }
+    
+    private var heightOutOfRange: AnyPublisher<Bool, Never> {
+        heightInteger
+            .map({ !CharacterModel.heightAllowedRange.contains($0) })
+            .eraseToAnyPublisher()
+    }
+    
+    private var weightInteger: AnyPublisher<Int, Never> {
+        weightTextField.textPublisher
+            .map({ Int($0) ?? 0 })
+            .eraseToAnyPublisher()
+    }
+    
+    private var weightOutOfRange: AnyPublisher<Bool, Never> {
+        weightInteger
+            .map({ !CharacterModel.weightAllowedRange.contains($0) })
+            .eraseToAnyPublisher()
+    }
+    
+    private func setupBindings() {
+        ageInteger
+            .receive(on: RunLoop.main)
+            .assign(to: \.age, on: viewModel)
+            .store(in: &cancellables)
+        
+        ageOutOfRange
+            .receive(on: RunLoop.main)
+            .sink { outOfRange in
+                self.ageErrorLabel.text = outOfRange ? "Age out of range: \( CharacterModel.ageAllowedRange)" : ""
+            }
+            .store(in: &cancellables)
+        
+        heightInteger
+            .receive(on: RunLoop.main)
+            .assign(to: \.height, on: viewModel)
+            .store(in: &cancellables)
+        
+        heightOutOfRange
+            .receive(on: RunLoop.main)
+            .sink { outOfRange in
+                self.heightErrorLabel.text = outOfRange ? "Height out of range: \( CharacterModel.heightAllowedRange)" : ""
+            }
+            .store(in: &cancellables)
+        
+        weightInteger
+            .receive(on: RunLoop.main)
+            .assign(to: \.weight, on: viewModel)
+            .store(in: &cancellables)
+        
+        weightOutOfRange
+            .receive(on: RunLoop.main)
+            .sink { outOfRange in
+                self.weightErrorLabel.text = outOfRange ? "Weight out of range: \( CharacterModel.weightAllowedRange)" : ""
+            }
+            .store(in: &cancellables)
+        
+        Publishers.CombineLatest3(ageOutOfRange.merge(with: Just(false)),
+                                  weightOutOfRange.merge(with: Just(false)),
+                                  heightOutOfRange.merge(with: Just(false)))
+        .map { $0 || $1 || $2 }
+        .receive(on: RunLoop.main)
+        .sink { anyValueOutOfRange in
+            self.sendCharacterButton.isEnabled = !anyValueOutOfRange
+        }
+        .store(in: &cancellables)
+        
+        viewModel.$age
+            .map({String($0)})
+            .assign(to: \.ageTextField.text, on: self)
+            .store(in: &cancellables)
+        
+        viewModel.$height
+            .map({String($0)})
+            .assign(to: \.heightTextField.text, on: self)
+            .store(in: &cancellables)
+        
+        viewModel.$weight
+            .map({String($0)})
+            .assign(to: \.weightTextField.text, on: self)
+            .store(in: &cancellables)
+        
+        // TODO: check ref cycle
+        
+        viewModel.$sendingMessageStatus
+            .debounce(for: 0.1, scheduler: RunLoop.main).sink { status in
+                UIView.transition(with: self.sendingMessageStatusStackView, duration: 0.4,
+                                  options: .transitionCrossDissolve,
+                                  animations: {
+                    switch status {
+                    case .notRequested:
+                        self.sendingMessageStatusStackView.isHidden = true
+                    case .creatingSession:
+                        self.sendCharacterButton.isEnabled = false
+                        self.sendingMessageStatusStackView.isHidden = false
+                        self.successView.isHidden = true
+                        self.activityIndicator.startAnimating()
+                        self.sendingMessageStatus.text = "Creating session"
+                    case .sendingMessage:
+                        self.sendCharacterButton.isEnabled = false
+                        self.sendingMessageStatusStackView.isHidden = false
+                        self.successView.isHidden = true
+                        self.activityIndicator.startAnimating()
+                        self.sendingMessageStatus.text = "Sending message"
+                    case .success:
+                        self.sendCharacterButton.isEnabled = false
+                        self.sendingMessageStatusStackView.isHidden = false
+                        self.successView.isHidden = false
+                        self.activityIndicator.stopAnimating()
+                        self.sendingMessageStatus.text = "Character sent successfully"
+                        self.sendCharacterButton.isEnabled = true
+                        
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            UIView.animate(withDuration: 0.4) {
+                                self.sendingMessageStatusStackView.isHidden = true
+                            }
+                        }
+                    case .error(let error):
+                        self.handleError(error: error)
+                    }
+                })
+            }
+            .store(in: &cancellables)
+    }
+}
+
+// MARK: UI
+
+extension MainViewController {
+    func generateDoneToolbar(textfield: UITextField) -> UIToolbar {
+        let doneToolbar: UIToolbar = UIToolbar()
+        doneToolbar.sizeToFit()
+        
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(self.doneButtonAction))
+        
+        let items = [flexSpace, done]
+        doneToolbar.items = items
+        doneToolbar.barStyle = .default
+        
+        return doneToolbar
+    }
+    
+    private func generateTextField(placeHolder: String) -> UITextField {
+        let textField = UITextField()
+        textField.textAlignment = .center
+        textField.placeholder = placeHolder
+        textField.keyboardType = .numberPad
+        textField.returnKeyType = .done
+        textField.borderStyle = .roundedRect
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        
+        textField.inputAccessoryView = generateDoneToolbar(textfield: textField)
+        textField.delegate = self
+        return textField
+    }
+    
+    private func generateTextLabel(text: String) -> UILabel {
+        let label = UILabel()
+        label.text = text
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }
+    
+    private func generateErrorLabel() -> UILabel {
+        let label = UILabel()
+        label.text = ""
+        label.textColor = .red
+        label.font = UIFont.preferredFont(forTextStyle: .caption2)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }
+}
+
+
+extension MainViewController {
     private func setupUI() {
         
         self.addChild(collectionViewController)
@@ -261,167 +431,10 @@ class MainViewController: UIViewController {
         
     }
     
-    @objc func buttonTapped() {
-        viewModel.sendAvatarToAppleWatch()
-    }
-    
-    private var ageInteger: AnyPublisher<Int, Never> {
-        ageTextField.textPublisher
-            .map({ Int($0) ?? 0 })
-            .eraseToAnyPublisher()
-    }
-    
-    private var ageOutOfRange: AnyPublisher<Bool, Never> {
-        ageInteger
-            .map({ !CharacterModel.ageAllowedRange.contains($0) })
-            .eraseToAnyPublisher()
-    }
-    
-    private var heightInteger: AnyPublisher<Int, Never> {
-        heightTextField.textPublisher
-            .map({ Int($0) ?? 0 })
-            .eraseToAnyPublisher()
-    }
-    
-    private var heightOutOfRange: AnyPublisher<Bool, Never> {
-        heightInteger
-            .map({ !CharacterModel.heightAllowedRange.contains($0) })
-            .eraseToAnyPublisher()
-    }
-    
-    private var weightInteger: AnyPublisher<Int, Never> {
-        weightTextField.textPublisher
-            .map({ Int($0) ?? 0 })
-            .eraseToAnyPublisher()
-    }
-    
-    private var weightOutOfRange: AnyPublisher<Bool, Never> {
-        weightInteger
-            .map({ !CharacterModel.weightAllowedRange.contains($0) })
-            .eraseToAnyPublisher()
-    }
-    
-    private func setupBindings() {
-        ageInteger
-            .receive(on: RunLoop.main)
-            .assign(to: \.age, on: viewModel)
-            .store(in: &cancellables)
-        
-        ageOutOfRange
-            .receive(on: RunLoop.main)
-            .sink { outOfRange in
-                self.ageErrorLabel.text = outOfRange ? "Age out of range: \( CharacterModel.ageAllowedRange)" : ""
-            }
-            .store(in: &cancellables)
-        
-        heightInteger
-            .receive(on: RunLoop.main)
-            .assign(to: \.height, on: viewModel)
-            .store(in: &cancellables)
-        
-        heightOutOfRange
-            .receive(on: RunLoop.main)
-            .sink { outOfRange in
-                self.heightErrorLabel.text = outOfRange ? "Height out of range: \( CharacterModel.heightAllowedRange)" : ""
-            }
-            .store(in: &cancellables)
-        
-        weightInteger
-            .receive(on: RunLoop.main)
-            .assign(to: \.weight, on: viewModel)
-            .store(in: &cancellables)
-        
-        weightOutOfRange
-            .receive(on: RunLoop.main)
-            .sink { outOfRange in
-                self.weightErrorLabel.text = outOfRange ? "Weight out of range: \( CharacterModel.weightAllowedRange)" : ""
-            }
-            .store(in: &cancellables)
-        
-        Publishers.CombineLatest3(ageOutOfRange.merge(with: Just(false)),
-                                  weightOutOfRange.merge(with: Just(false)),
-                                  heightOutOfRange.merge(with: Just(false)))
-            .map { $0 || $1 || $2 }
-            .receive(on: RunLoop.main)
-            .sink { anyValueOutOfRange in
-                self.sendCharacterButton.isEnabled = !anyValueOutOfRange
-            }
-            .store(in: &cancellables)
-        
-        viewModel.$age
-            .map({String($0)})
-            .assign(to: \.ageTextField.text, on: self)
-            .store(in: &cancellables)
-        
-        viewModel.$height
-            .map({String($0)})
-            .assign(to: \.heightTextField.text, on: self)
-            .store(in: &cancellables)
-        
-        viewModel.$weight
-            .map({String($0)})
-            .assign(to: \.weightTextField.text, on: self)
-            .store(in: &cancellables)
-        
-        // TODO: check ref cycle
-        
-        viewModel.$sendingMessageStatus
-            .debounce(for: 0.1, scheduler: RunLoop.main).sink { status in
-            UIView.transition(with: self.sendingMessageStatusStackView, duration: 0.4,
-                              options: .transitionCrossDissolve,
-                              animations: {
-                switch status {
-                case .notRequested:
-                    self.sendingMessageStatusStackView.isHidden = true
-                case .creatingSession:
-                    self.sendCharacterButton.isEnabled = false
-                    self.sendingMessageStatusStackView.isHidden = false
-                    self.successView.isHidden = true
-                    self.activityIndicator.startAnimating()
-                    self.sendingMessageStatus.text = "Creating session"
-                case .sendingMessage:
-                    self.sendCharacterButton.isEnabled = false
-                    self.sendingMessageStatusStackView.isHidden = false
-                    self.successView.isHidden = true
-                    self.activityIndicator.startAnimating()
-                    self.sendingMessageStatus.text = "Sending message"
-                case .success:
-                    self.sendCharacterButton.isEnabled = false
-                    self.sendingMessageStatusStackView.isHidden = false
-                    self.successView.isHidden = false
-                    self.activityIndicator.stopAnimating()
-                    self.sendingMessageStatus.text = "Character sent successfully"
-                    self.sendCharacterButton.isEnabled = true
-                    
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        UIView.animate(withDuration: 0.4) {
-                            self.sendingMessageStatusStackView.isHidden = true
-                        }
-                    }
-                case .error(let error):
-                    self.handleError(error: error)
-                }
-            })
-        }
-        .store(in: &cancellables)
-    }
-    
-    private func handleError(error: WCError) {
-        presentAlert(message: error.localizedDescription)
-    }
-    
-    private func presentAlert(message: String) {
-        let alertController = UIAlertController(title: "Alert", 
-                                                message: message,
-                                                preferredStyle: .alert)
-        
-        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
-        }))
-        self.present(alertController, animated: true, completion: nil)
-    }
 }
 
+
+// MARK: View Cycle
 extension MainViewController {
     override func viewWillAppear(_ animated: Bool) {
         Task {
@@ -430,6 +443,8 @@ extension MainViewController {
     }
 }
 
+
+// MARK: UITextFieldDelegate
 extension MainViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
@@ -443,14 +458,6 @@ extension MainViewController: UITextFieldDelegate {
         }
         
         return true
-    }
-}
-
-private extension UITextField {
-    var textPublisher: AnyPublisher<String, Never> {
-        NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: self)
-            .compactMap { ($0.object as? UITextField)?.text }
-            .eraseToAnyPublisher()
     }
 }
 

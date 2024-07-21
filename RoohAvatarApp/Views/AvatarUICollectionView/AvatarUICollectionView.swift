@@ -21,17 +21,6 @@ class AvatarCollectionViewController: UIViewController {
         setupCollectionView()
     }
     
-    func setupViewModel(viewModel: AvatarCollectionViewModel) {
-        self.viewModel = viewModel
-        
-        self.viewModel.$selectedIndexPath
-            .sink { index in
-                self.collectionView.scrollToItem(at: index,
-                                             at: .centeredHorizontally, animated: true)
-        }
-        .store(in: &cancellables)
-    }
-    
     private let cellWidth: CGFloat = 250
     private let cellHeight: CGFloat = 250
     
@@ -61,6 +50,12 @@ class AvatarCollectionViewController: UIViewController {
         ])
     }
     
+    
+}
+
+// MARK: Scroll behavior
+
+extension AvatarCollectionViewController {
     private func scrollToSelectedItem() {
         collectionView.scrollToItem(at: viewModel.selectedIndexPath, at: .centeredHorizontally, animated: true)
     }
@@ -84,7 +79,7 @@ class AvatarCollectionViewController: UIViewController {
     }
     
     private func selectItemClosestToCenter() {
-    
+        
         if let indexPath = itemIndexClosestToCenter() {
             withAnimation {
                 viewModel.selectItem(at: indexPath)
@@ -95,6 +90,23 @@ class AvatarCollectionViewController: UIViewController {
     }
 }
 
+// MARK: View Model
+
+extension AvatarCollectionViewController {
+    func setupViewModel(viewModel: AvatarCollectionViewModel) {
+        self.viewModel = viewModel
+        
+        self.viewModel.$selectedIndexPath
+            .sink { index in
+                self.collectionView.scrollToItem(at: index,
+                                                 at: .centeredHorizontally, animated: true)
+            }
+            .store(in: &cancellables)
+    }
+}
+
+// MARK: View Cycle
+
 extension AvatarCollectionViewController {
     override func viewDidAppear(_ animated: Bool) {
         self.collectionView.scrollToItem(at: self.viewModel.selectedIndexPath,
@@ -102,7 +114,9 @@ extension AvatarCollectionViewController {
     }
 }
 
-extension AvatarCollectionViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+// MARK: UICollectionViewDataSource
+extension AvatarCollectionViewController: UICollectionViewDataSource {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.numberOfItems()
     }
@@ -116,6 +130,26 @@ extension AvatarCollectionViewController: UICollectionViewDelegate, UICollection
         cell.configure(with: image, isSelected: isSelected)
         return cell
     }
+    
+}
+
+// MARK: UIScrollViewDelegate
+extension AvatarCollectionViewController: UIScrollViewDelegate {
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        selectItemClosestToCenter()
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            selectItemClosestToCenter()
+        }
+    }
+    
+}
+
+// MARK: UICollectionViewDelegate
+extension AvatarCollectionViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         viewModel.selectItem(at: indexPath)
@@ -132,23 +166,6 @@ extension AvatarCollectionViewController: UICollectionViewDelegate, UICollection
         return UIEdgeInsets(top: 0, left: horizontalInset, bottom: 0, right: horizontalInset)
     }
     
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        selectItemClosestToCenter()
-    }
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if !decelerate {
-            selectItemClosestToCenter()
-        }
-    }
-}
-
-
-extension AvatarCollectionViewModel {
-    static var mock: AvatarCollectionViewModel = {
-        let images = AvatarsModel.models
-        return AvatarCollectionViewModel(images: images)
-    }()
 }
 
 #Preview {

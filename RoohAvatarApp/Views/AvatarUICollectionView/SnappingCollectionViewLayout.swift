@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 class SnappingCollectionViewLayout: UICollectionViewFlowLayout {
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {

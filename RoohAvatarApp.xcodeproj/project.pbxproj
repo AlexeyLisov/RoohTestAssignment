@@ -25,7 +25,6 @@
 		8A53C3B22C4D8AB500E65D20 /* Sending message status.gif in Resources */ = {isa = PBXBuildFile; fileRef = 8A53C3AD2C4D8AB500E65D20 /* Sending message status.gif */; };
 		8A53C3B32C4D8AB500E65D20 /* Sending message status.gif in Resources */ = {isa = PBXBuildFile; fileRef = 8A53C3AD2C4D8AB500E65D20 /* Sending message status.gif */; };
 		8A53C3B62C4D910A00E65D20 /* UITextField+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A53C3B52C4D910A00E65D20 /* UITextField+UIKit.swift */; };
-		8A53C3B72C4D910A00E65D20 /* UITextField+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A53C3B52C4D910A00E65D20 /* UITextField+UIKit.swift */; };
 		8A59AB692C4962B2009E6BC6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59AB682C4962B2009E6BC6 /* AppDelegate.swift */; };
 		8A59AB6B2C4962B2009E6BC6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59AB6A2C4962B2009E6BC6 /* SceneDelegate.swift */; };
 		8A59AB6D2C4962B2009E6BC6 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A59AB6C2C4962B2009E6BC6 /* MainViewController.swift */; };
@@ -706,7 +705,6 @@
 				8AB96F1E2C4AB75200693B3B /* MainViewModel.swift in Sources */,
 				8AB96F192C4AB71400693B3B /* HorizontalPickerView.swift in Sources */,
 				8AB96F212C4AB79D00693B3B /* AvatarModel.swift in Sources */,
-				8A53C3B72C4D910A00E65D20 /* UITextField+UIKit.swift in Sources */,
 				8AB96F1B2C4AB72E00693B3B /* MainView.swift in Sources */,
 				8A20A95F2C4CEBBA00C8082C /* CharacterModel.swift in Sources */,
 				8A59ABA12C4963A4009E6BC6 /* ContentView.swift in Sources */,

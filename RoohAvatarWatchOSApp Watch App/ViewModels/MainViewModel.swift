@@ -37,6 +37,8 @@ class MainViewModel: ObservableObject {
             self.age = characterModel.age
             self.height = characterModel.height
             self.weight = characterModel.weight
+
+            self.selectedImage = characterModel.avatarModel.imageName
         }.store(in: &cancellables)
             
     }

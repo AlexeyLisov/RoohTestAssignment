@@ -78,6 +78,17 @@ class MainViewController: UIViewController {
         return label
     }
     
+    private func generateErrorLabel() -> UILabel {
+        let label = UILabel()
+        label.text = ""
+        label.textColor = .red
+        label.font = UIFont.preferredFont(forTextStyle: .caption2)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }
+    
     private var collectionViewController = AvatarCollectionViewController()
     
     private var ageTextField: UITextField!
@@ -87,6 +98,10 @@ class MainViewController: UIViewController {
     private var ageLabel: UILabel!
     private var heightLabel: UILabel!
     private var weightLabel: UILabel!
+    
+    private var ageErrorLabel: UILabel!
+    private var heightErrorLabel: UILabel!
+    private var weightErrorLabel: UILabel!
     
     private var activityIndicator: UIActivityIndicatorView!
     private var successView: UIImageView!
@@ -104,6 +119,8 @@ class MainViewController: UIViewController {
     
     private func setupViewModels() {
         self.collectionViewController.setupViewModel(viewModel: viewModel.avatarCollectionViewModel)
+        
+        self.viewModel.setInitialValues()
     }
     
     private func setupUI() {
@@ -128,19 +145,23 @@ class MainViewController: UIViewController {
         self.heightTextField = generateTextField(placeHolder: "Height")
         self.weightTextField = generateTextField(placeHolder: "Weight")
         
+        self.ageErrorLabel = generateErrorLabel()
+        self.heightErrorLabel = generateErrorLabel()
+        self.weightErrorLabel = generateErrorLabel()
+        
         view.backgroundColor = .white
         
-        let ageStackView = UIStackView(arrangedSubviews: [ageLabel, ageTextField])
+        let ageStackView = UIStackView(arrangedSubviews: [ageLabel, ageTextField, ageErrorLabel])
         ageStackView.axis = .vertical
         ageStackView.spacing = 10
         ageStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        let heightStackView = UIStackView(arrangedSubviews: [heightLabel, heightTextField])
+        let heightStackView = UIStackView(arrangedSubviews: [heightLabel, heightTextField, heightErrorLabel])
         heightStackView.axis = .vertical
         heightStackView.spacing = 10
         heightStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        let weightStackView = UIStackView(arrangedSubviews: [weightLabel, weightTextField])
+        let weightStackView = UIStackView(arrangedSubviews: [weightLabel, weightTextField, weightErrorLabel])
         weightStackView.axis = .vertical
         weightStackView.spacing = 10
         weightStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -159,13 +180,17 @@ class MainViewController: UIViewController {
             mainStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             mainStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
-            mainStackView.heightAnchor.constraint(equalToConstant: 60),
+            mainStackView.heightAnchor.constraint(equalToConstant: 110),
             
             ageTextField.widthAnchor.constraint(equalTo: heightTextField.widthAnchor),
             heightTextField.widthAnchor.constraint(equalTo: weightTextField.widthAnchor),
             ageTextField.heightAnchor.constraint(equalToConstant: 30),
             ageTextField.heightAnchor.constraint(equalTo: heightTextField.heightAnchor),
-            heightTextField.heightAnchor.constraint(equalTo: weightTextField.heightAnchor)
+            heightTextField.heightAnchor.constraint(equalTo: weightTextField.heightAnchor),
+            
+            ageErrorLabel.heightAnchor.constraint(equalToConstant: 40),
+            heightErrorLabel.heightAnchor.constraint(equalTo: ageErrorLabel.heightAnchor),
+            weightErrorLabel.heightAnchor.constraint(equalTo: ageErrorLabel.heightAnchor)
         ])
         
         sendingMessageStatus = UITextView()
@@ -219,6 +244,7 @@ class MainViewController: UIViewController {
         sendCharacterButton.layer.cornerRadius = 10
         sendCharacterButton.layer.masksToBounds = true
         sendCharacterButton.translatesAutoresizingMaskIntoConstraints = false
+        sendCharacterButton.setTitleColor(.lightGray, for: .disabled)
         
         sendCharacterButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         
@@ -239,23 +265,87 @@ class MainViewController: UIViewController {
         viewModel.sendAvatarToAppleWatch()
     }
     
-    private func setupBindings() {
+    private var ageInteger: AnyPublisher<Int, Never> {
         ageTextField.textPublisher
-            .receive(on: RunLoop.main)
             .map({ Int($0) ?? 0 })
+            .eraseToAnyPublisher()
+    }
+    
+    private var ageOutOfRange: AnyPublisher<Bool, Never> {
+        ageInteger
+            .map({ !CharacterModel.ageAllowedRange.contains($0) })
+            .eraseToAnyPublisher()
+    }
+    
+    private var heightInteger: AnyPublisher<Int, Never> {
+        heightTextField.textPublisher
+            .map({ Int($0) ?? 0 })
+            .eraseToAnyPublisher()
+    }
+    
+    private var heightOutOfRange: AnyPublisher<Bool, Never> {
+        heightInteger
+            .map({ !CharacterModel.heightAllowedRange.contains($0) })
+            .eraseToAnyPublisher()
+    }
+    
+    private var weightInteger: AnyPublisher<Int, Never> {
+        weightTextField.textPublisher
+            .map({ Int($0) ?? 0 })
+            .eraseToAnyPublisher()
+    }
+    
+    private var weightOutOfRange: AnyPublisher<Bool, Never> {
+        weightInteger
+            .map({ !CharacterModel.weightAllowedRange.contains($0) })
+            .eraseToAnyPublisher()
+    }
+    
+    private func setupBindings() {
+        ageInteger
+            .receive(on: RunLoop.main)
             .assign(to: \.age, on: viewModel)
             .store(in: &cancellables)
         
-        heightTextField.textPublisher
+        ageOutOfRange
             .receive(on: RunLoop.main)
-            .map({ Int($0) ?? 0 })
+            .sink { outOfRange in
+                self.ageErrorLabel.text = outOfRange ? "Age out of range: \( CharacterModel.ageAllowedRange)" : ""
+            }
+            .store(in: &cancellables)
+        
+        heightInteger
+            .receive(on: RunLoop.main)
             .assign(to: \.height, on: viewModel)
             .store(in: &cancellables)
         
-        weightTextField.textPublisher
+        heightOutOfRange
             .receive(on: RunLoop.main)
-            .map({ Int($0) ?? 0 })
+            .sink { outOfRange in
+                self.heightErrorLabel.text = outOfRange ? "Height out of range: \( CharacterModel.heightAllowedRange)" : ""
+            }
+            .store(in: &cancellables)
+        
+        weightInteger
+            .receive(on: RunLoop.main)
             .assign(to: \.weight, on: viewModel)
+            .store(in: &cancellables)
+        
+        weightOutOfRange
+            .receive(on: RunLoop.main)
+            .sink { outOfRange in
+                self.weightErrorLabel.text = outOfRange ? "Weight out of range: \( CharacterModel.weightAllowedRange)" : ""
+            }
+            .store(in: &cancellables)
+        
+        Publishers.CombineLatest3(ageOutOfRange.merge(with: Just(false)),
+                                  weightOutOfRange.merge(with: Just(false)),
+                                  heightOutOfRange.merge(with: Just(false)))
+            .map { $0 || $1 || $2 }
+            .receive(on: RunLoop.main)
+            .sink { anyValueOutOfRange in
+                self.sendCharacterButton.isEnabled = !anyValueOutOfRange
+            }
             .store(in: &cancellables)
         
         viewModel.$age

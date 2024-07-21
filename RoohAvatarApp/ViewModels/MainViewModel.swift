@@ -21,6 +21,12 @@ class MainViewModel: ObservableObject {
     let watchService: WatchConnectivityServiceProtocol
     var cancellables = Set<AnyCancellable>()
     
+    func setInitialValues() {
+        age = CharacterModel.ageAllowedRange.lowerBound
+        height = CharacterModel.heightAllowedRange.lowerBound
+        weight = CharacterModel.weightAllowedRange.lowerBound
+    }
+    
     
     init(watchService: WatchConnectivityService = WatchConnectivityService()) {
         self.watchService = watchService

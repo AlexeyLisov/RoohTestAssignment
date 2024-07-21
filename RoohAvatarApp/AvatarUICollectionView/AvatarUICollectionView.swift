@@ -18,7 +18,6 @@ class AvatarCollectionViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        setupViewModel()
         setupCollectionView()
     }
     

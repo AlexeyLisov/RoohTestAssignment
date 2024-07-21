@@ -70,7 +70,7 @@ class MainViewModel: ObservableObject {
             }
             
             do {
-                try await self.watchService.sendMessageToWatch(data: encodedMessage)
+                try await self.watchService.sendMessageToCompanion(data: encodedMessage)
             } catch let error as WCError {
                 sendingMessageStatus = .error(error)
                 return

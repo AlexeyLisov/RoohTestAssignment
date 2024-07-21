@@ -104,6 +104,7 @@
 		8A20A9572C4C76FC00C8082C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = RoohAvatarApp/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		8A20A95D2C4CEBBA00C8082C /* CharacterModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterModel.swift; sourceTree = "<group>"; };
 		8A53C39E2C4D51B800E65D20 /* SharedAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SharedAssets.xcassets; sourceTree = "<group>"; };
+		8A53C3A12C4D669A00E65D20 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		8A59AB652C4962B2009E6BC6 /* RoohAvatarApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RoohAvatarApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A59AB682C4962B2009E6BC6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8A59AB6A2C4962B2009E6BC6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -190,6 +191,7 @@
 		8A59AB5C2C4962B2009E6BC6 = {
 			isa = PBXGroup;
 			children = (
+				8A53C3A12C4D669A00E65D20 /* README.md */,
 				8A6A7E612C4C6AAF00A087E2 /* Shared */,
 				8A59ABD82C4995D7009E6BC6 /* Helpers */,
 				8A59AB672C4962B2009E6BC6 /* RoohAvatarApp */,

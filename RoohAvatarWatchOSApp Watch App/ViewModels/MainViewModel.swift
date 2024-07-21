@@ -71,7 +71,7 @@ class MainViewModel: ObservableObject {
         
         Task {
             do {
-                try await service.sendMessageToWatch(data: message)
+                try await service.sendMessageToCompanion(data: message)
             } catch let error {
                 print(String(describing: error))
             }

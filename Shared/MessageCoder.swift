@@ -7,12 +7,6 @@
 
 import Foundation
 
-
-//protocol MessageCoder {
-//    func encodeMessage(type: CharacterModel) -> [String: Any]
-//    func decodeMessage(message: [String: Any]) -> CharacterModel?
-//}
-
 struct MessageCoder {
     
     private enum Keys: String {

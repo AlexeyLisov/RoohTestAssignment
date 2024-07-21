@@ -15,7 +15,7 @@ protocol WatchConnectivityServiceProtocol {
     
     func setupWCSession() -> Bool
     func activateSession() async
-    func sendMessageToWatch(data: [String: Any]) async throws
+    func sendMessageToCompanion(data: [String: Any]) async throws
 }
 
 class WatchConnectivityService: NSObject {
@@ -64,7 +64,7 @@ extension WatchConnectivityService: WatchConnectivityServiceProtocol {
         }
     }
     
-    func sendMessageToWatch(data: [String: Any]) async throws {
+    func sendMessageToCompanion(data: [String: Any]) async throws {
         
         print(session)
         

@@ -10,9 +10,9 @@ import WatchConnectivity
 
 
 class MainViewModel: ObservableObject {
-    @Published var age: Int = 0
-    @Published var height: Int = 0
-    @Published var weight: Int = 0
+    @Published var age: Int = CharacterModel.ageAllowedRange.lowerBound
+    @Published var height: Int = CharacterModel.heightAllowedRange.lowerBound
+    @Published var weight: Int = CharacterModel.weightAllowedRange.lowerBound
     
     @Published var sendingMessageStatus: SendingMessageStatus = .notRequested
     

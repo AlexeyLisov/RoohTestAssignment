@@ -58,7 +58,7 @@ struct MainView: View {
                 .bold()
             Spacer()
             Picker("Age", selection: $viewModel.age) {
-                ForEach(0..<125, id: \.self) {
+                ForEach(CharacterModel.ageAllowedRange, id: \.self) {
                     Text("\($0)")
                 }
             }
@@ -74,7 +74,7 @@ struct MainView: View {
                 .bold()
             Spacer()
             Picker("Height", selection: $viewModel.height) {
-                ForEach(50..<250, id: \.self) {
+                ForEach(CharacterModel.heightAllowedRange, id: \.self) {
                     Text("\($0)")
                 }
             }
@@ -89,7 +89,7 @@ struct MainView: View {
                 .bold()
             Spacer()
             Picker("Weight", selection: $viewModel.weight) {
-                ForEach(50..<300, id: \.self) {
+                ForEach(CharacterModel.weightAllowedRange, id: \.self) {
                     Text("\($0)")
                 }
             }

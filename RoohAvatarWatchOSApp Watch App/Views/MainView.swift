@@ -17,11 +17,9 @@ struct MainView: View {
     var body: some View {
         
         TabView {
+            imagesScrollView
             parametersView
                 .padding(5)
-            imagesScrollView
-            
-            
         }
         .padding(-10)
         .tabViewStyle(.verticalPage)

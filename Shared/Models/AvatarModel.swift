@@ -17,6 +17,6 @@ struct AvatarModel: Identifiable, Hashable, Codable {
 }
 
 
-struct AvatarsModel {
+enum AvatarsModel {
     static var models = Array(1...6).map({AvatarModel(imageName: "avatar_\($0)")})
 }

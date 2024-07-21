@@ -11,19 +11,27 @@ import UIKit
 class SnappingCollectionViewLayout: UICollectionViewFlowLayout {
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        let attributes = super.layoutAttributesForElements(in: rect)
+        
+        guard let attributes = super.layoutAttributesForElements(in: rect) else { return nil }
+        
         var attributesCopy = [UICollectionViewLayoutAttributes]()
-        for itemAttributes in attributes! {
-            let itemAttributesCopy = itemAttributes.copy() as! UICollectionViewLayoutAttributes
-            cellClosestToCenterWillBeProminent(attribute: itemAttributesCopy)
-            attributesCopy.append(itemAttributesCopy)
+        for itemAttributes in attributes {
+            if let itemAttributesCopy = itemAttributes.copy() as? UICollectionViewLayoutAttributes {
+                cellClosestToCenterWillBeProminent(attribute: itemAttributesCopy)
+                attributesCopy.append(itemAttributesCopy)
+            }
         }
         return attributesCopy
     }
     
     func cellClosestToCenterWillBeProminent(attribute: UICollectionViewLayoutAttributes) {
-        let collectionCenter = collectionView!.frame.size.width / 2
-        let offset = collectionView!.contentOffset.x
+        
+        guard let collectionView else {
+            return
+        }
+        
+        let collectionCenter = collectionView.frame.size.width / 2
+        let offset = collectionView.contentOffset.x
         let normalizedCenter = attribute.center.x - offset
         let maxDistance = self.itemSize.width + self.minimumLineSpacing
         

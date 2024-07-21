@@ -24,11 +24,6 @@ struct HorizontalPickerView: View {
                                 .scaledToFit()
                                 .frame(width: itemSize, height: itemSize)
                                 .contentShape(Rectangle())
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 15)
-                                        .stroke(Color.purple,
-                                                lineWidth: viewModel.selectedImage == image.imageName ? 5 : 0)
-                                )
                         }
                     }
                     .padding(2)

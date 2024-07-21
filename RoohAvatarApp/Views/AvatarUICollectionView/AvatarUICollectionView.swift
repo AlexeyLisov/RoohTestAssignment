@@ -108,7 +108,9 @@ extension AvatarCollectionViewController: UICollectionViewDelegate, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AvatarCollectionViewCell.identifier, for: indexPath) as! AvatarCollectionViewCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AvatarCollectionViewCell.identifier, for: indexPath) as? AvatarCollectionViewCell else {
+            return UICollectionViewCell()
+        }
         let image = viewModel.image(for: indexPath)
         let isSelected = viewModel.isSelectedItem(at: indexPath)
         cell.configure(with: image, isSelected: isSelected)
@@ -144,7 +146,7 @@ extension AvatarCollectionViewController: UICollectionViewDelegate, UICollection
 
 extension AvatarCollectionViewModel {
     static var mock: AvatarCollectionViewModel = {
-        let images = ["circle", "square", "square.and.arrow.up", "pencil", "eraser"].map { AvatarModel(imageName: $0) }
+        let images = AvatarsModel.models
         return AvatarCollectionViewModel(images: images)
     }()
 }

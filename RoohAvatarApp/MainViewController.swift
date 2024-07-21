@@ -366,7 +366,7 @@ class MainViewController: UIViewController {
         // TODO: check ref cycle
         
         viewModel.$sendingMessageStatus
-            .debounce(for: 0.3, scheduler: RunLoop.main).sink { status in
+            .debounce(for: 0.1, scheduler: RunLoop.main).sink { status in
             UIView.transition(with: self.sendingMessageStatusStackView, duration: 0.4,
                               options: .transitionCrossDissolve,
                               animations: {
@@ -376,19 +376,28 @@ class MainViewController: UIViewController {
                 case .creatingSession:
                     self.sendCharacterButton.isEnabled = false
                     self.sendingMessageStatusStackView.isHidden = false
+                    self.successView.isHidden = true
+                    self.activityIndicator.startAnimating()
                     self.sendingMessageStatus.text = "Creating session"
                 case .sendingMessage:
+                    self.sendCharacterButton.isEnabled = false
                     self.sendingMessageStatusStackView.isHidden = false
+                    self.successView.isHidden = true
+                    self.activityIndicator.startAnimating()
                     self.sendingMessageStatus.text = "Sending message"
                 case .success:
+                    self.sendCharacterButton.isEnabled = false
                     self.sendingMessageStatusStackView.isHidden = false
+                    self.successView.isHidden = false
+                    self.activityIndicator.stopAnimating()
                     self.sendingMessageStatus.text = "Character sent successfully"
                     self.sendCharacterButton.isEnabled = true
-                    self.activityIndicator.stopAnimating()
-                    self.successView.isHidden = false
+                    
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        self.sendingMessageStatusStackView.isHidden = true
+                        UIView.animate(withDuration: 0.4) {
+                            self.sendingMessageStatusStackView.isHidden = true
+                        }
                     }
                 case .error(let error):
                     self.handleError(error: error)

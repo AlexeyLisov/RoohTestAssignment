@@ -19,76 +19,7 @@ enum SendingMessageStatus {
     case success
 }
 
-class MainViewModel: ObservableObject {
-    @Published var age: Int = 0
-    @Published var height: Int = 0
-    @Published var weight: Int = 0
-    
-    @Published var sendingMessageStatus: SendingMessageStatus = .notRequested
-    
-    var avatarCollectionViewModel: AvatarCollectionViewModel
-    
-    let watchService: WatchConnectivityServiceProtocol
-    var cancellables = Set<AnyCancellable>()
-    
-    init(watchService: WatchConnectivityService = WatchConnectivityService()) {
-        self.watchService = watchService
-        self.avatarCollectionViewModel = AvatarCollectionViewModel.mock
-        
-        // TODO: check reference cycle
-        self.watchService.messagePublisher.sink { message in
-            
-            guard let characterModel = MessageCoder().decodeMessage(message: message) else {
-                return
-            }
-            
-            self.mapModel(characterModel: characterModel)
-        }
-        .store(in: &cancellables)
-    }
-    
-    func sendAvatarToAppleWatch() {
-        
-        sendingMessageStatus = .creatingSession
-        guard self.watchService.setupWCSession() else {
-            sendingMessageStatus = .error(.init(.sessionNotSupported))
-            sendingMessageStatus = .notRequested
-            return
-        }
-        
-        let characterModel = CharacterModel(avatarModel: avatarCollectionViewModel.avatarModel,
-                                         age: age, height: height, weight: weight)
-        
-        let encodedMessage = MessageCoder().encodeMessage(type: characterModel)
-        
-        Task {
-            await self.watchService.activateSession()
-            
-            await MainActor.run {
-                sendingMessageStatus = .sendingMessage
-            }
-            
-            do {
-                try await self.watchService.sendMessageToWatch(data: encodedMessage)
-            } catch let error as WCError {
-                sendingMessageStatus = .error(error)
-                return
-            }
-            
-            await MainActor.run {
-                sendingMessageStatus = .success
-            }
-        }
-    }
-    
-    func mapModel(characterModel: CharacterModel) {
-        self.age = characterModel.age
-        self.height = characterModel.height
-        self.weight = characterModel.weight
-        self.avatarCollectionViewModel.selectItem(with: characterModel.avatarModel)
-    }
-    
-}
+
 
 
 import UIKit

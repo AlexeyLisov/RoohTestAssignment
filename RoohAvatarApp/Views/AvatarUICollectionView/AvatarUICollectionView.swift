@@ -97,8 +97,8 @@ extension AvatarCollectionViewController {
         self.viewModel = viewModel
         
         self.viewModel.$selectedIndexPath
-            .sink { index in
-                self.collectionView.scrollToItem(at: index,
+            .sink { [weak self] index in
+                self?.collectionView.scrollToItem(at: index,
                                                  at: .centeredHorizontally, animated: true)
             }
             .store(in: &cancellables)

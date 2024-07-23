@@ -34,16 +34,16 @@ class MainViewModel: ObservableObject {
         
         self.watchService.setupWCSession()
         
-        // TODO: check reference cycle
         self.watchService.messagePublisher
             .receive(on: DispatchQueue.main)
-            .sink { message in
+            .sink { [weak self] message in
             
-            guard let characterModel = MessageCoder().decodeMessage(message: message) else {
-                return
-            }
+                guard let self,
+                        let characterModel = MessageCoder().decodeMessage(message: message) else {
+                    return
+                }
             
-            self.mapModel(characterModel: characterModel)
+                self.mapModel(characterModel: characterModel)
         }
         .store(in: &cancellables)
     }

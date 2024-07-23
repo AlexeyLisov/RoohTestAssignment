@@ -135,38 +135,38 @@ extension MainViewController {
     
     private func setupBindings() {
         ageInteger
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .assign(to: \.age, on: viewModel)
             .store(in: &cancellables)
         
         ageOutOfRange
-            .receive(on: RunLoop.main)
-            .sink { outOfRange in
-                self.ageErrorLabel.text = outOfRange ? "Age out of range: \( CharacterModel.ageAllowedRange)" : ""
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] outOfRange in
+                self?.ageErrorLabel.text = outOfRange ? "Age out of range: \( CharacterModel.ageAllowedRange)" : ""
             }
             .store(in: &cancellables)
         
         heightInteger
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .assign(to: \.height, on: viewModel)
             .store(in: &cancellables)
         
         heightOutOfRange
-            .receive(on: RunLoop.main)
-            .sink { outOfRange in
-                self.heightErrorLabel.text = outOfRange ? "Height out of range: \( CharacterModel.heightAllowedRange)" : ""
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] outOfRange in
+                self?.heightErrorLabel.text = outOfRange ? "Height out of range: \( CharacterModel.heightAllowedRange)" : ""
             }
             .store(in: &cancellables)
         
         weightInteger
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .assign(to: \.weight, on: viewModel)
             .store(in: &cancellables)
         
         weightOutOfRange
-            .receive(on: RunLoop.main)
-            .sink { outOfRange in
-                self.weightErrorLabel.text = outOfRange ? "Weight out of range: \( CharacterModel.weightAllowedRange)" : ""
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] outOfRange in
+                self?.weightErrorLabel.text = outOfRange ? "Weight out of range: \( CharacterModel.weightAllowedRange)" : ""
             }
             .store(in: &cancellables)
         
@@ -174,9 +174,9 @@ extension MainViewController {
                                   weightOutOfRange.merge(with: Just(false)),
                                   heightOutOfRange.merge(with: Just(false)))
         .map { $0 || $1 || $2 }
-        .receive(on: RunLoop.main)
-        .sink { anyValueOutOfRange in
-            self.sendCharacterButton.isEnabled = !anyValueOutOfRange
+        .receive(on: DispatchQueue.main)
+        .sink { [weak self] anyValueOutOfRange in
+            self?.sendCharacterButton.isEnabled = !anyValueOutOfRange
         }
         .store(in: &cancellables)
         
@@ -195,10 +195,11 @@ extension MainViewController {
             .assign(to: \.weightTextField.text, on: self)
             .store(in: &cancellables)
         
-        // TODO: check ref cycle
-        
         viewModel.$sendingMessageStatus
-            .debounce(for: 0.1, scheduler: RunLoop.main).sink { status in
+            .debounce(for: 0.1, scheduler: DispatchQueue.main).sink { [weak self] status in
+                
+                guard let self else { return }
+                
                 UIView.transition(with: self.sendingMessageStatusStackView, duration: 0.4,
                                   options: .transitionCrossDissolve,
                                   animations: {

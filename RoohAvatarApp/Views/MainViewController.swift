@@ -11,16 +11,6 @@ import Combine
 import WatchConnectivity
 
 
-enum SendingMessageStatus {
-    case notRequested
-    case creatingSession
-    case sendingMessage
-    case error(WCError)
-    case success
-}
-
-import UIKit
-import Combine
 
 class MainViewController: UIViewController {
     
@@ -29,24 +19,23 @@ class MainViewController: UIViewController {
     private var viewModel = MainViewModel()
     private var cancellables = Set<AnyCancellable>()
     
+    private lazy var ageStackView: CharacteristicView = {
+        CharacteristicView(name: "Age", doneToolbar: generateDoneToolbar())
+    }()
+    
+    private lazy var heightStackView: CharacteristicView = {
+        CharacteristicView(name: "Height", doneToolbar: generateDoneToolbar())
+    }()
+    
+    private lazy var weightStackView: CharacteristicView = {
+        CharacteristicView(name: "Weight", doneToolbar: generateDoneToolbar())
+    }()
+    
     private var collectionViewController = AvatarCollectionViewController()
-    
-    private var ageTextField: UITextField!
-    private var heightTextField: UITextField!
-    private var weightTextField: UITextField!
-    
-    private var ageLabel: UILabel!
-    private var heightLabel: UILabel!
-    private var weightLabel: UILabel!
-    
-    private var ageErrorLabel: UILabel!
-    private var heightErrorLabel: UILabel!
-    private var weightErrorLabel: UILabel!
-    
-    private var activityIndicator: UIActivityIndicatorView!
-    private var successView: UIImageView!
-    private var sendingMessageStatus: UITextView!
-    private var sendingMessageStatusStackView: UIStackView!
+   
+    private lazy var messageSendingStatusView: MessageSendingStatusView = {
+        return MessageSendingStatusView()
+    }()
     
     private var sendCharacterButton: UIButton!
     
@@ -72,8 +61,9 @@ class MainViewController: UIViewController {
                                                 message: message,
                                                 preferredStyle: .alert)
         
-        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
-        }))
+        alertController.addAction(UIAlertAction(title: "OK", 
+                                                style: .default,
+                                                handler: { _ in }))
         self.present(alertController, animated: true, completion: nil)
     }
 }
@@ -81,12 +71,12 @@ class MainViewController: UIViewController {
 // MARK: Button Actions
 extension MainViewController {
     @objc func doneButtonAction() {
-        if ageTextField.isFirstResponder {
-            heightTextField.becomeFirstResponder()
-        } else if heightTextField.isFirstResponder {
-            weightTextField.becomeFirstResponder()
-        } else if weightTextField.isFirstResponder {
-            weightTextField.resignFirstResponder()
+        if ageStackView.textField.isFirstResponder {
+            heightStackView.textField.becomeFirstResponder()
+        } else if heightStackView.textField.isFirstResponder {
+            weightStackView.textField.becomeFirstResponder()
+        } else if weightStackView.textField.isFirstResponder {
+            weightStackView.textField.resignFirstResponder()
         }
     }
     
@@ -98,7 +88,7 @@ extension MainViewController {
 // MARK: Bindings
 extension MainViewController {
     private var ageInteger: AnyPublisher<Int, Never> {
-        ageTextField.textPublisher
+        ageStackView.textFieldPublisher
             .map({ Int($0) ?? 0 })
             .eraseToAnyPublisher()
     }
@@ -110,7 +100,7 @@ extension MainViewController {
     }
     
     private var heightInteger: AnyPublisher<Int, Never> {
-        heightTextField.textPublisher
+        heightStackView.textFieldPublisher
             .map({ Int($0) ?? 0 })
             .eraseToAnyPublisher()
     }
@@ -122,7 +112,7 @@ extension MainViewController {
     }
     
     private var weightInteger: AnyPublisher<Int, Never> {
-        weightTextField.textPublisher
+        weightStackView.textFieldPublisher
             .map({ Int($0) ?? 0 })
             .eraseToAnyPublisher()
     }
@@ -144,7 +134,7 @@ extension MainViewController {
         ageOutOfRange
             .receive(on: DispatchQueue.main)
             .sink { [weak self] outOfRange in
-                self?.ageErrorLabel.text = outOfRange ? "Age out of range: \( CharacterModel.ageAllowedRange)" : ""
+                self?.ageStackView.errorLabel.text = outOfRange ? "Age out of range: \( CharacterModel.ageAllowedRange)" : ""
             }
             .store(in: &cancellables)
         
@@ -156,7 +146,7 @@ extension MainViewController {
         heightOutOfRange
             .receive(on: DispatchQueue.main)
             .sink { [weak self] outOfRange in
-                self?.heightErrorLabel.text = outOfRange ? "Height out of range: \( CharacterModel.heightAllowedRange)" : ""
+                self?.heightStackView.errorLabel.text = outOfRange ? "Height out of range: \( CharacterModel.heightAllowedRange)" : ""
             }
             .store(in: &cancellables)
         
@@ -168,7 +158,7 @@ extension MainViewController {
         weightOutOfRange
             .receive(on: DispatchQueue.main)
             .sink { [weak self] outOfRange in
-                self?.weightErrorLabel.text = outOfRange ? "Weight out of range: \( CharacterModel.weightAllowedRange)" : ""
+                self?.weightStackView.errorLabel.text = outOfRange ? "Weight out of range: \( CharacterModel.weightAllowedRange)" : ""
             }
             .store(in: &cancellables)
         
@@ -184,17 +174,17 @@ extension MainViewController {
         
         viewModel.$age
             .map({String($0)})
-            .assign(to: \.ageTextField.text, on: self)
+            .assign(to: \.ageStackView.textField.text, on: self)
             .store(in: &cancellables)
         
         viewModel.$height
             .map({String($0)})
-            .assign(to: \.heightTextField.text, on: self)
+            .assign(to: \.heightStackView.textField.text, on: self)
             .store(in: &cancellables)
         
         viewModel.$weight
             .map({String($0)})
-            .assign(to: \.weightTextField.text, on: self)
+            .assign(to: \.weightStackView.textField.text, on: self)
             .store(in: &cancellables)
         
         viewModel.$sendingMessageStatus
@@ -202,100 +192,33 @@ extension MainViewController {
                 
                 guard let self else { return }
                 
-                UIView.transition(with: self.sendingMessageStatusStackView, duration: 0.4,
-                                  options: .transitionCrossDissolve,
-                                  animations: {
+//                UIView.animate(withDuration: 0.2) {
                     switch status {
                     case .notRequested:
-                        self.sendingMessageStatusStackView.isHidden = true
+                        self.messageSendingStatusView.setNotRequested()
                     case .creatingSession:
+                        self.messageSendingStatusView.setCreatingSession()
                         self.sendCharacterButton.isEnabled = false
-                        self.sendingMessageStatusStackView.isHidden = false
-                        self.successView.isHidden = true
-                        self.activityIndicator.startAnimating()
-                        self.sendingMessageStatus.text = "Creating session"
                     case .sendingMessage:
+                        self.messageSendingStatusView.setSendingMessage()
                         self.sendCharacterButton.isEnabled = false
-                        self.sendingMessageStatusStackView.isHidden = false
-                        self.successView.isHidden = true
-                        self.activityIndicator.startAnimating()
-                        self.sendingMessageStatus.text = "Sending message"
                     case .success:
-                        self.sendCharacterButton.isEnabled = false
-                        self.sendingMessageStatusStackView.isHidden = false
-                        self.successView.isHidden = false
-                        self.activityIndicator.stopAnimating()
-                        self.sendingMessageStatus.text = "Character sent successfully"
+                        self.messageSendingStatusView.setSuccess()
                         self.sendCharacterButton.isEnabled = true
                         
-                        
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            UIView.animate(withDuration: 0.4) {
-                                self.sendingMessageStatusStackView.isHidden = true
-                            }
-                        }
                     case .error(let error):
+                        self.sendCharacterButton.isEnabled = true
                         self.handleError(error: error)
                     }
-                })
+//                }
             }
             .store(in: &cancellables)
     }
 }
 
 // MARK: UI
-
 extension MainViewController {
-    func generateDoneToolbar(textfield: UITextField) -> UIToolbar {
-        let doneToolbar: UIToolbar = UIToolbar()
-        doneToolbar.sizeToFit()
-        
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(self.doneButtonAction))
-        
-        let items = [flexSpace, done]
-        doneToolbar.items = items
-        doneToolbar.barStyle = .default
-        
-        return doneToolbar
-    }
-    
-    private func generateTextField(placeHolder: String) -> UITextField {
-        let textField = UITextField()
-        textField.textAlignment = .center
-        textField.placeholder = placeHolder
-        textField.keyboardType = .numberPad
-        textField.returnKeyType = .done
-        textField.borderStyle = .roundedRect
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        
-        textField.inputAccessoryView = generateDoneToolbar(textfield: textField)
-        textField.delegate = self
-        return textField
-    }
-    
-    private func generateTextLabel(text: String) -> UILabel {
-        let label = UILabel()
-        label.text = text
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }
-    
-    private func generateErrorLabel() -> UILabel {
-        let label = UILabel()
-        label.text = ""
-        label.textColor = .red
-        label.font = UIFont.preferredFont(forTextStyle: .caption2)
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }
-}
-
-
-extension MainViewController {
+    private func setup() {}
     private func setupUI() {
         
         self.addChild(collectionViewController)
@@ -310,104 +233,35 @@ extension MainViewController {
             collectionViewController.view.heightAnchor.constraint(equalToConstant: 300),
         ])
         
-        self.ageLabel = generateTextLabel(text: "Age")
-        self.heightLabel = generateTextLabel(text: "Height")
-        self.weightLabel = generateTextLabel(text: "Weight")
-        
-        self.ageTextField = generateTextField(placeHolder: "Age")
-        self.heightTextField = generateTextField(placeHolder: "Height")
-        self.weightTextField = generateTextField(placeHolder: "Weight")
-        
-        self.ageErrorLabel = generateErrorLabel()
-        self.heightErrorLabel = generateErrorLabel()
-        self.weightErrorLabel = generateErrorLabel()
-        
         view.backgroundColor = .white
         
-        let ageStackView = UIStackView(arrangedSubviews: [ageLabel, ageTextField, ageErrorLabel])
-        ageStackView.axis = .vertical
-        ageStackView.spacing = 10
-        ageStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        let heightStackView = UIStackView(arrangedSubviews: [heightLabel, heightTextField, heightErrorLabel])
-        heightStackView.axis = .vertical
-        heightStackView.spacing = 10
-        heightStackView.translatesAutoresizingMaskIntoConstraints = false
+        let characteristicsStackView = UIStackView(arrangedSubviews: [ageStackView, heightStackView, weightStackView])
+        characteristicsStackView.axis = .horizontal
+        characteristicsStackView.spacing = 20
+        characteristicsStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        let weightStackView = UIStackView(arrangedSubviews: [weightLabel, weightTextField, weightErrorLabel])
-        weightStackView.axis = .vertical
-        weightStackView.spacing = 10
-        weightStackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let mainStackView = UIStackView(arrangedSubviews: [ageStackView, heightStackView, weightStackView])
-        mainStackView.axis = .horizontal
-        mainStackView.spacing = 20
-        mainStackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(mainStackView)
+        view.addSubview(characteristicsStackView)
         
         NSLayoutConstraint.activate([
-            mainStackView.topAnchor.constraint(equalTo: collectionViewController.view.bottomAnchor, constant: 20),
-            mainStackView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            mainStackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            mainStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            mainStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            characteristicsStackView.topAnchor.constraint(equalTo: collectionViewController.view.bottomAnchor, constant: 20),
+            characteristicsStackView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            characteristicsStackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            characteristicsStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            characteristicsStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
-            mainStackView.heightAnchor.constraint(equalToConstant: 110),
+            characteristicsStackView.heightAnchor.constraint(equalToConstant: 110),
             
-            ageTextField.widthAnchor.constraint(equalTo: heightTextField.widthAnchor),
-            heightTextField.widthAnchor.constraint(equalTo: weightTextField.widthAnchor),
-            ageTextField.heightAnchor.constraint(equalToConstant: 30),
-            ageTextField.heightAnchor.constraint(equalTo: heightTextField.heightAnchor),
-            heightTextField.heightAnchor.constraint(equalTo: weightTextField.heightAnchor),
+            ageStackView.widthAnchor.constraint(equalTo: heightStackView.widthAnchor),
+            heightStackView.widthAnchor.constraint(equalTo: weightStackView.widthAnchor),
             
-            ageErrorLabel.heightAnchor.constraint(equalToConstant: 40),
-            heightErrorLabel.heightAnchor.constraint(equalTo: ageErrorLabel.heightAnchor),
-            weightErrorLabel.heightAnchor.constraint(equalTo: ageErrorLabel.heightAnchor)
         ])
         
-        sendingMessageStatus = UITextView()
-        sendingMessageStatus.text = "Establishing connection with Apple Watch"
-        sendingMessageStatus.textAlignment = .center
-        sendingMessageStatus.font = UIFont.preferredFont(forTextStyle: .body)
-        sendingMessageStatus.backgroundColor = .clear
+        setupUIForButtonAndMessageStatusView()
         
-        activityIndicator = UIActivityIndicatorView()
-        activityIndicator.startAnimating()
-        
-        successView = UIImageView(image: UIImage(systemName: "checkmark.circle.fill")!)
-        successView.contentMode = .scaleAspectFit
-        successView.tintColor = .systemGreen
-        
-        successView.isHidden = true
-        
-        sendingMessageStatusStackView = UIStackView(arrangedSubviews: [successView, activityIndicator, sendingMessageStatus])
-        sendingMessageStatusStackView.translatesAutoresizingMaskIntoConstraints = false
-        sendingMessageStatusStackView.axis = .vertical
-        sendingMessageStatusStackView.spacing = 5
-        sendingMessageStatusStackView.layoutMargins = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
-        sendingMessageStatusStackView.isLayoutMarginsRelativeArrangement = true
-        
-        sendingMessageStatusStackView.isHidden = true
-        
-        sendingMessageStatusStackView.layer.cornerRadius = 10
-        sendingMessageStatusStackView.layer.borderColor = UIColor.gray.cgColor
-        sendingMessageStatusStackView.layer.borderWidth = 1
-        sendingMessageStatusStackView.layer.masksToBounds = true
-        
-        sendingMessageStatusStackView.isHidden = true
-        view.addSubview(sendingMessageStatusStackView)
-        
-        NSLayoutConstraint.activate([
-            sendingMessageStatusStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
-            sendingMessageStatusStackView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40),
-            sendingMessageStatusStackView.heightAnchor.constraint(equalToConstant: 100),
-            
-            successView.heightAnchor.constraint(equalToConstant: 30),
-            successView.widthAnchor.constraint(equalToConstant: 30)
-        ])
-        
+    }
+    
+    func setupUIForButtonAndMessageStatusView(){
         sendCharacterButton = UIButton(type: .system)
         
         // Set button title and appearance
@@ -422,18 +276,39 @@ extension MainViewController {
         sendCharacterButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         
         self.view.addSubview(sendCharacterButton)
+        self.view.addSubview(messageSendingStatusView)
         
         NSLayoutConstraint.activate([
-            sendingMessageStatusStackView.bottomAnchor.constraint(equalTo: sendCharacterButton.topAnchor, constant: -20),
+            messageSendingStatusView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40),
+            messageSendingStatusView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            messageSendingStatusView.bottomAnchor.constraint(equalTo: sendCharacterButton.topAnchor, constant: -20),
+            
             sendCharacterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             sendCharacterButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             sendCharacterButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             sendCharacterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             sendCharacterButton.heightAnchor.constraint(equalToConstant: 50),
         ])
-        
     }
     
+}
+
+extension MainViewController {
+    func generateDoneToolbar() -> UIToolbar {
+        let doneToolbar: UIToolbar = UIToolbar()
+        doneToolbar.sizeToFit()
+        
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done,
+                                                    target: self,
+                                                    action: #selector(self.doneButtonAction))
+        
+        let items = [flexSpace, done]
+        doneToolbar.items = items
+        doneToolbar.barStyle = .default
+        
+        return doneToolbar
+    }
 }
 
 
@@ -443,24 +318,6 @@ extension MainViewController {
         Task {
             await self.viewModel.watchService.activateSession()
         }
-    }
-}
-
-
-// MARK: UITextFieldDelegate
-extension MainViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-    
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        
-        if let first = string.first, first == "0", range.lowerBound == 0 {
-            return false
-        }
-        
-        return true
     }
 }
 

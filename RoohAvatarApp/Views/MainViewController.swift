@@ -53,8 +53,8 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupBindings()
         setupViewModels()
+        setupBindings()
     }
     
     private func setupViewModels() {
@@ -134,6 +134,8 @@ extension MainViewController {
     }
     
     private func setupBindings() {
+        collectionViewController.setupSubscriptions()
+        
         ageInteger
             .receive(on: DispatchQueue.main)
             .assign(to: \.age, on: viewModel)

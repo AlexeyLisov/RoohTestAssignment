@@ -95,11 +95,13 @@ extension AvatarCollectionViewController {
 extension AvatarCollectionViewController {
     func setupViewModel(viewModel: AvatarCollectionViewModel) {
         self.viewModel = viewModel
-        
+    }
+    
+    func setupSubscriptions() {
         self.viewModel.$selectedIndexPath
             .sink { [weak self] index in
                 self?.collectionView.scrollToItem(at: index,
-                                                 at: .centeredHorizontally, animated: true)
+                                                  at: .centeredHorizontally, animated: true)
             }
             .store(in: &cancellables)
     }
@@ -176,4 +178,5 @@ extension AvatarCollectionViewController: UICollectionViewDelegateFlowLayout {
         vc.setupViewModel(viewModel: AvatarCollectionViewModel.mock)
         return vc
     }
+    .frame(height: 300)
 }
